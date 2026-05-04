@@ -1,5 +1,103 @@
-body {
+@import './variables.css';
+
+#signup {
+    width: 100vw;
+    height: 100%;
     display: flex;
+    flex-direction: column;
     align-items: center;
+    outline: auto;
+}
+
+#topBar {
+    padding: 1rem 0;
+    background-color: var(--primary-colour);
+    height: auto;
+    width: 100%;
+    display: flex;
     justify-content: center;
+    z-index: 10;
+}
+
+#signupContainer {
+    background-color: var(--primary-colour);
+    max-width: 600px;
+    width: 80%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem 10rem;
+    border-radius: 10px;
+    margin: 1rem 0;
+    /* box-shadow: 0 0 2rem 1rem black; */
+}
+
+#signupContainer::after {
+    content: "";
+    width: 80%;
+    height: 100%;
+    background-color: var(--secondary-colour2);
+    opacity: 40%;
+    z-index: -10;
+    position: absolute;
+}
+
+h1, label, input, button {
+    font-family: 'Roboto Mono', Arial, Helvetica, sans-serif;
+}
+
+h1, label {
+    color: aliceblue;
+}
+
+input {
+    color: black;
+}
+
+#signupContainer button {
+    color: aliceblue;
+    font-size: 2rem;
+    width: 80%;
+    /* max-width: 400px; */
+    height: 5rem;
+    background-color: var(--secondary-colour2);
+    border: 0px;
+    margin-top: 6rem;
+    border-radius: 5px;
+}
+
+#signupContainer button:hover {
+    scale: 110%;
+}
+
+#signupContainer h1 {
+    font-size: 3rem;
+}
+
+#formContainer {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .5rem;
+    width: 100%;
+}
+
+.formLabel {
+    width: 100%;
+    text-align: left;
+    font-size: 1.5rem;
+}
+
+.formInput {
+    width: 100%;
+    font-size: inherit;
+    height: 40px;
+    padding: 0 10px;
+}
+
+input:focus {
+    outline: none;
 }

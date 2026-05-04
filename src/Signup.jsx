@@ -1,10 +1,12 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import TopBar from "./TopBar.jsx";
-import './index.css'
+import TopBar from "./components/TopBar.jsx";
+import SignupContainer from "./SignupContainer.jsx";
+import './Signup.css'
 
-createRoot(document.getElementById('root')).render(
-    <StrictMode>
-        <TopBar/>
-    </StrictMode>
-)
+export default function Signup() {
+    return (
+        <div id="signup">
+            <TopBar />
+            <SignupContainer/>
+        </div>
+    )
+}
