@@ -4,6 +4,6 @@ Final year diploma project of a payroll system with authentication, database sto
 # Build instructions 
 Use these commands to run the development build on your local machine
 
-```npm install```
+1. ```npm install```
 
-```npm run dev```
+2. ```npm run dev```
