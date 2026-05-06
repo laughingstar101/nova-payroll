@@ -1,4 +1,8 @@
-@import './variables.css';
+:root {
+    --primary-colour: rgb(49, 41, 99);
+    --secondary-colour: rgb(72, 61, 139);
+    --secondary-colour2: rgb(132, 120, 206);
+}
 
 html, body, #root {
     height: 100%;
@@ -8,9 +12,11 @@ html, body, #root {
 * {
     margin: 0;
     padding: 0;
+    font-family: 'Roboto Mono', Arial, Helvetica, sans-serif;
+    box-sizing: border-box;
 }
 
 body {
     background-color: var(--secondary-colour);
-    overflow: hidden;
+    overflow-y: auto;
 }

@@ -1,0 +1,22 @@
+.button {
+    color: aliceblue;
+    font-size: 2rem;
+    font-family: 'Roboto Mono', Arial, Helvetica, sans-serif;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;  
+    width: 80%;
+    /* max-width: 400px; */
+    height: 5rem;
+    background-color: var(--secondary-colour2);
+    border: 0px;
+    margin-top: 6rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.button:hover {
+    transform: scale(1.1);
+}

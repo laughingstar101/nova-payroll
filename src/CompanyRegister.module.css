@@ -1,27 +1,14 @@
-@import './variables.css';
-
-#signup {
+.signup {
     width: 100vw;
     height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    outline: auto;
 }
 
-#topBar {
-    padding: 1rem 0;
+.signupContainer {
     background-color: var(--primary-colour);
-    height: auto;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    z-index: 10;
-}
-
-#signupContainer {
-    background-color: var(--primary-colour);
-    max-width: 600px;
+    max-width: 1000px;
     width: 80%;
     height: 100%;
     display: flex;
@@ -31,17 +18,18 @@
     padding: 1rem 10rem;
     border-radius: 10px;
     margin: 1rem 0;
-    /* box-shadow: 0 0 2rem 1rem black; */
+    position: relative;
 }
 
-#signupContainer::after {
+.signupContainer::after {
     content: "";
-    width: 80%;
+    width: 150%;
     height: 100%;
     background-color: var(--secondary-colour2);
     opacity: 40%;
     z-index: -10;
     position: absolute;
+    padding: 1rem 0;
 }
 
 h1, label, input, button {
@@ -56,27 +44,11 @@ input {
     color: black;
 }
 
-#signupContainer button {
-    color: aliceblue;
-    font-size: 2rem;
-    width: 80%;
-    /* max-width: 400px; */
-    height: 5rem;
-    background-color: var(--secondary-colour2);
-    border: 0px;
-    margin-top: 6rem;
-    border-radius: 5px;
-}
-
-#signupContainer button:hover {
-    scale: 110%;
-}
-
-#signupContainer h1 {
+.signupContainer h1 {
     font-size: 3rem;
 }
 
-#formContainer {
+.formContainer {
     margin-top: 2rem;
     display: flex;
     flex-direction: column;
@@ -100,4 +72,14 @@ input {
 
 input:focus {
     outline: none;
+}
+
+.loginBtn {
+    font-size: 1rem; 
+    color: aliceblue;
+    margin-top: 3rem;
+}
+
+.loginBtn:hover {
+    color: rgb(143, 248, 248);
 }

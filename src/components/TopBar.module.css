@@ -1,0 +1,9 @@
+.topBar {
+    padding: 1rem 0;
+    background-color: var(--primary-colour);
+    height: auto;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    z-index: 10;
+}
