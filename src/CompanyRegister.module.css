@@ -61,6 +61,7 @@ input {
     width: 100%;
     text-align: left;
     font-size: 1.5rem;
+    margin-top: 3rem;
 }
 
 .formInput {
@@ -68,6 +69,19 @@ input {
     font-size: inherit;
     height: 40px;
     padding: 0 10px;
+}
+
+.passwordInputContainer {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.passwordVisibility {
+    height: 40px;
+    width: 40px;
+    padding: 6px;
+    background-color: var(--secondary-colour);
 }
 
 input:focus {
