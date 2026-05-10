@@ -1,34 +1,57 @@
 import TopBar from "./components/TopBar.jsx";
+import SetForm from "./components/SetForm";
 import styles from './CompanyRegister.module.css'
-import Button from "./components/Button.jsx";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 
 export default function CompanyRegister() {
-    const [companyName, setCompanyName] = useState('');
-    const [companyPassword, setCompanyPassword] = useState('');
+    const [companyFormData, setCompanyFormData] = useState({
+        companyName: '',
+        companyEmail: '',
+        companyPassword: ''
+    })
     const [passwordVisBtn, setVis] = useState(false) // true = visible, false = hidden
+
+    const handleInputChange = (fieldName, value) => {
+        SetForm(setCompanyFormData, fieldName, value)
+    }
+
+    const handleSubmit = (event) => {
+        event.preventDefault()
+        console.log('Company registration data:', companyFormData)
+        // TODO: send companyFormData to your API or Supabase here
+    }
 
     return (
         <div className={styles.signup}>
             <TopBar />
             <section className={styles.signupContainer}>
-                <h1>Register Company!</h1>    
-                <section className={styles.formContainer}>
+                <h1>Register Company!</h1>
+                <form className={styles.formContainer} onSubmit={handleSubmit}>
                     <label className={styles.formLabel}>Company name:</label>
                     <input 
+                        name="companyName"
                         type="text" 
                         className={styles.formInput} 
-                        value={companyName} 
-                        onChange={(e) => setCompanyName(e.target.value)}
+                        value={companyFormData.companyName} 
+                        onChange={(e) => handleInputChange(e.target.name, e.target.value)}
+                    />
+                    <label className={styles.formLabel}>Company email:</label>
+                    <input 
+                        name="companyEmail"
+                        type="email" 
+                        className={styles.formInput} 
+                        value={companyFormData.companyEmail} 
+                        onChange={(e) => handleInputChange(e.target.name, e.target.value)}
                     />
                     <label className={styles.formLabel}>Company password:</label>
                     <span className={styles.passwordInputContainer}>
                         <input 
+                            name="companyPassword"
                             type={passwordVisBtn ? "text" : "password"} 
                             className={styles.formInput} 
-                            value={companyPassword} 
-                            onChange={(e) => setCompanyPassword(e.target.value)}
+                            value={companyFormData.companyPassword} 
+                            onChange={(e) => handleInputChange(e.target.name, e.target.value)}
                         />
                         {passwordVisBtn ? (
                             <svg 
@@ -54,8 +77,8 @@ export default function CompanyRegister() {
                             </svg>
                         )}
                     </span>
-                </section>
-                <Button/>
+                    <button type="submit" className={styles.submitBtn}>REGISTER</button>
+                </form>
                 <Link to='/companyLogin' className={styles.loginBtn}>Have company? Login</Link>
             </section>
         </div>
