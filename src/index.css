@@ -1,3 +1,12 @@
+@import "tailwindcss";
+
+@theme {
+    --color-primary-colour: rgb(49, 41, 99);
+    --color-secondary-colour: rgb(72, 61, 139);
+    --color-secondary-colour2: rgb(132, 120, 206);
+    --color-complementary-colour: rgb(226, 211, 30);
+}
+
 :root {
     --primary-colour: rgb(49, 41, 99);
     --secondary-colour: rgb(72, 61, 139);
@@ -19,4 +28,8 @@ html, body, #root {
 body {
     background-color: var(--secondary-colour);
     overflow-y: auto;
+}
+
+textarea:focus, input:focus{
+    outline: none;
 }

@@ -1,0 +1,107 @@
+.signup {
+    width: 100vw;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.signupContainer {
+    background-color: var(--primary-colour);
+    max-width: 600px;
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 3rem 3rem;
+    border-radius: 10px;
+    margin-top: 4rem;
+    position: relative;
+}
+
+h1, label, input, button {
+    font-family: 'Roboto Mono', Arial, Helvetica, sans-serif;
+}
+
+h1, label {
+    color: aliceblue;
+}
+
+input {
+    color: black;
+}
+
+.formContainer {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .5rem;
+    width: 100%;
+}
+
+/* .inputContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 3rem;
+    margin-top: 2rem;
+} */
+
+/* .formInput {
+    width: 100%;
+    font-size: inherit;
+    height: 3rem;
+    padding: 0 10px;
+    border: none;
+} */
+
+/* .passwordInputContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+} */
+
+/* .passwordVisibility {
+    height: 3rem;
+    width: 3rem;
+    padding: 6px;
+    background-color: var(--secondary-colour);
+} */
+
+/* .loginBtn {
+    font-size: 1rem; 
+    color: aliceblue;
+    margin-top: 3rem;
+}
+
+.loginBtn:hover {
+    color: rgb(143, 248, 248);
+    cursor: pointer;
+} */
+
+/* .submitBtn {
+    color: aliceblue;
+    font-size: 2rem;
+    font-family: 'Roboto Mono', Arial, Helvetica, sans-serif;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;  
+    width: 80%;
+    /* max-width: 400px; */
+    /* height: 5rem;
+    background-color: var(--secondary-colour2);
+    border: 0px;
+    margin-top: 3rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.submitBtn:hover {
+    transform: scale(1.1);
+} */ 
