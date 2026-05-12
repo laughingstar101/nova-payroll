@@ -1,8 +1,11 @@
 import TopBar from "./TopBar.jsx";
 import { useState } from "react";
 import { supabase } from '../utils/supabase/supabase.js'
+import { useNavigate } from "react-router-dom";
 
 export default function CompanyRegister() {
+    const navigate = useNavigate();
+
     const [companyFormData, setCompanyFormData] = useState({
         companyName: '',
         companyEmail: '',
@@ -11,6 +14,10 @@ export default function CompanyRegister() {
     const [passwordVisBtn, setVis] = useState(false) // true = visible, false = hidden
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isLogin, setIsLogin] = useState(false);
+    const [loginData, setLoginData] = useState({
+        email: '',
+        password: ''
+    })
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -29,7 +36,8 @@ export default function CompanyRegister() {
         }
 
         console.log('Company registration data:', companyFormData)
-        const { error } = await supabase.auth.signUp({
+
+        const { data: authData, error: signUpError } = await supabase.auth.signUp({
             email: companyFormData.companyEmail,
             password: companyFormData.companyPassword,
             options: {
@@ -39,21 +47,60 @@ export default function CompanyRegister() {
             }
         })
         
-        if (error) {
-            if (error.status === 429) {
+        if (signUpError) {
+            if (signUpError.status === 429) {
                 alert("Too many registration attempts. Please wait a few minutes before trying again.");
             } else {
-                console.error('Signup error:', error.message)
+                console.error('Signup error:', signUpError.message)
+                alert("Signup error. Please try again.");
+            }
+        } else {
+            const { error: insertError } = await supabase
+                .from('Company')
+                .insert({
+                company_id: authData.user.id,
+                company_email: companyFormData.companyEmail,
+                company_name: companyFormData.companyName
+                });
+
+            if (insertError) console.error('Insert error:', insertError);
+            else {
+                alert('Registration successful!');
+                navigate("/dashboard")
             }
         }
         setIsSubmitting(false)
     }
+
+    const handleLoginChange = (e) => {
+        const { name, value } = e.target;
+        setLoginData(prev => ({ ...prev, [name]: value }));
+    }
+
+    async function handleLoginSubmit(event) {
+        event.preventDefault();
+        if (isSubmitting) return;
+        setIsSubmitting(true);
+
+        const { error } = await supabase.auth.signInWithPassword({
+            email: loginData.email,
+            password: loginData.password
+        });
+        if (error) {
+            alert(error.message);
+            setIsSubmitting(false);
+        } else {
+            alert("Login successful");
+            navigate("/dashboard");
+        }
+    } 
 
     return (
         <div className="min-h-screen flex flex-col items-center bg-linear-to-br from-secondary-colour to-secondary-colour2">
             <TopBar />
             <section className="max-w-2xl w-4/5 pt-12 pb-12 rounded-xl flex flex-col items-center mt-12 bg-primary-colour shadow-2xl shadow-primary-colour">
                 {!isLogin ? (
+                    // SIGNUP
                     <section className="w-full">
                         <form onSubmit={handleSubmit} className="flex flex-col gap-12 items-center pl-12 pr-12">
                             <h1 className="text-5xl text-white mb-4 text-center">Register Company</h1>
@@ -74,7 +121,7 @@ export default function CompanyRegister() {
                                 onChange={handleInputChange}
                             />
                             <span className="flex w-full items-center bg-secondary-colour">
-                                <input 
+                                <input
                                     placeholder="Password"
                                     name="companyPassword"
                                     type={passwordVisBtn ? "text" : "password"} 
@@ -111,15 +158,26 @@ export default function CompanyRegister() {
                         </form>
                     </section>
                 ) : (
+                    // SIGNIN
                     <section className="w-full">
-                        <form onSubmit={handleSubmit} className="flex flex-col gap-12 items-center pl-12 pr-12">
+                        <form onSubmit={handleLoginSubmit} className="flex flex-col gap-12 items-center pl-12 pr-12">
                             <h1 className="text-5xl text-white mb-4 text-center">Login Company</h1>
-                            <input type="email" placeholder="Enter email" className="bg-amber-50 w-full h-12! pl-2.5!"></input>
+                            <input
+                                type="email" 
+                                name="email"
+                                placeholder="Enter email" 
+                                className="bg-amber-50 w-full h-12! pl-2.5!"
+                                value={loginData.email}
+                                onChange={handleLoginChange}
+                            />  
                             <span className="flex w-full items-center bg-secondary-colour">
                                 <input 
                                     placeholder="Password"
+                                    name="password"
                                     type={passwordVisBtn ? "text" : "password"} 
                                     className="bg-amber-50 w-full h-12! pl-2.5!"
+                                    value={loginData.password}
+                                    onChange={handleLoginChange}
                                 />
                                 {passwordVisBtn ? (
                                     <svg 
