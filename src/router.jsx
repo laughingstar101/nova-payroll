@@ -3,9 +3,12 @@ import { createBrowserRouter } from "react-router-dom";
 import EmployeeRegister from "./components/EmployeeRegister";
 import Dashboard from "./components/Dashboard";
 import App from './App'
+import ProtectedRoute from "./ProtectedRoute";
+import UpdatePassword from "./components/UpdatePassword";
 
 export const router = createBrowserRouter([
     {path: "/", element: <App/>},
-    {path: "/employeeRegister", element: <EmployeeRegister/>},
-    {path: "/dashboard", element: <Dashboard/>},
+    {path: "/employee-register", element: <EmployeeRegister/>},
+    {path: "/dashboard", element: <ProtectedRoute><Dashboard/></ProtectedRoute>},
+    {path: "update-password", element: <UpdatePassword/>},
 ])  
