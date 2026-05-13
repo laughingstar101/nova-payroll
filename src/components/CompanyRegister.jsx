@@ -86,6 +86,7 @@ export default function CompanyRegister() {
     const handleLoginChange = (e) => {
         const { name, value } = e.target;
         setLoginData(prev => ({ ...prev, [name]: value }));
+        console.log(loginData);
     }
 
     const handleResetPasswordChange = (e) => {
@@ -112,11 +113,11 @@ export default function CompanyRegister() {
 
     async function handleResetPassword(event) {
         event.preventDefault();
-        if (isSubmitting) return;
-        setIsSubmitting(true);
-
-        const { error } = await supabase.auth.resetPasswordForEmail(resetPwData.email);
-
+        
+        const { error } = await supabase.auth.resetPasswordForEmail(resetPwData.email, {
+            redirectTo: `${window.location.origin}/update-password`
+        });
+        
         if (!error) {
             alert("Password reset link sent! Check your email.");
         } else {
@@ -124,21 +125,17 @@ export default function CompanyRegister() {
         }
         setIsResetPw(false);
         setIsLogin(true);
-        setIsSubmitting(false);
     }
-
-    // const forgotPassword = () => {
-    // }
 
     return (
         <div className="min-h-screen flex flex-col items-center bg-linear-to-br from-secondary-colour to-secondary-colour2">
             <TopBar />
-            <section className="max-w-2xl w-4/5 pt-12 pb-12 rounded-xl flex flex-col items-center mt-12 bg-primary-colour shadow-2xl shadow-primary-colour">
+            <section className="max-w-2xl w-4/5 pt-12 pb-12 rounded-xl flex flex-col items-center mt-12 bg-primary-colour shadow-2xl">
             {!isResetPw ? (
                 !isLogin ? (
                     // SIGNUP
                     <section className="w-full">
-                        <form onSubmit={handleSubmit} className="flex flex-col gap-12 items-center pl-12 pr-12">
+                        <form onSubmit={handleSubmit} className="flex flex-col gap-12 items-center px-12">
                             <h1 className="text-5xl text-white mb-4 text-center">Register Company</h1>
                             <input 
                                 placeholder="Company Name"
@@ -254,16 +251,11 @@ export default function CompanyRegister() {
                         <input 
                             className="bg-amber-50 w-full h-12 pl-2.5"
                             placeholder="Email" 
-                            value="resetPwData.email"
+                            value={resetPwData.email}
+                            name="email"
                             onChange={handleResetPasswordChange}
                         />
-                        <input 
-                            className="bg-amber-50 w-full h-12 pl-2.5" 
-                            placeholder="New password" 
-                            value="resetPwData.newPassword"
-                            onChange={handleResetPasswordChange}
-                        />
-                        <button className="bg-complementary-colour text-3xl w-full pt-2! pb-2! cursor-pointer hover:scale-105 transition-all uppercase" type="submit">Send reset link</button>
+                        <button className="bg-complementary-colour text-3xl w-full pt-2! pb-2! cursor-pointer hover:scale-105 transition-all uppercase" type="submit">reset</button>
                         <p onClick={() => setIsResetPw(false)} className="text-white cursor-pointer hover:text-cyan-300">Back</p>
                     </form>
                 </section>
