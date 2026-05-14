@@ -89,8 +89,7 @@ export default function Dashboard() {
     }
 
     const handleEmployeeChange = (id, field, value) => {
-        setEmployeeList(prevList => prevList.map(emp => emp.id === id ? { ...emp, [field]: value } : emp))
-        console.log(employeeList);
+        setEmployeeList(prevList => prevList.map(emp => emp.id === id ? { ...emp, [field]: value } : emp));
     }
 
     const deleteEmployee = (id) => {
