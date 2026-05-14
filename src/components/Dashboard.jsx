@@ -63,6 +63,8 @@ export default function Dashboard() {
         );
     }
 
+    const employeeCount = 0;
+
     return (
         <div className="min-h-screen flex flex-col bg-linear-to-br from-secondary-colour to-secondary-colour2">
             <TopBar />
@@ -76,27 +78,34 @@ export default function Dashboard() {
                     back to register
                 </a>
             </div>
-            <div className="container bg-primary-colour mx-auto py-4 flex flex-col items-center mt-12">
+            <div className="container bg-primary-colour mx-auto flex flex-col items-center mt-12 px-12 py-8 rounded-md shadow-xl">
                 {employee && employee.type === 'HR' && (
                     <section className="w-full flex flex-col items-center">
                         <p className="text-white text-2xl">Welcome back, HR</p>
-                        <div className="grid grid-cols-4 w-full mt-8 px-8">
+                        <div className="w-full mt-4">
+                            <p className="text-white text-lg">Amount of employees: {}</p>
+                        </div>
+                        <div className="grid grid-cols-4 w-full mt-8 border-secondary-colour gap-2 bg-white p-4 rounded-md">
+                            <div className="text-white sm:text-xl text-md uppercase text-center py-2 rounded-md border-2 border-secondary-colour2 bg-cyan-700">Id</div>
+                            <div className="text-white sm:text-xl text-md uppercase text-center py-2 rounded-md border-2 border-secondary-colour2 bg-cyan-700">Name</div>
+                            <div className="text-white sm:text-xl text-md uppercase text-center py-2 rounded-md border-2 border-secondary-colour2 bg-cyan-700">Email</div>
+                            <div className="text-white sm:text-xl text-md uppercase text-center py-2 rounded-md border-2 border-secondary-colour2 bg-cyan-700">Type</div>
+                            <div className="bg-red-600">2</div>
+                            <div className="bg-blue-600">3</div>
+                            <div className="bg-yellow-400">4</div>
+                            <div className="bg-white">1</div>
+                            <div className="bg-blue-600">3</div>
+                            <div className="bg-yellow-400">4</div>
+                            <div className="bg-white">1</div>
+                            <div className="bg-red-600">2</div>
+                            <div className="bg-yellow-400">4</div>
+                            <div className="bg-white">1</div>
+                            <div className="bg-red-600">2</div>
+                            <div className="bg-blue-600">3</div>
                             <div className="bg-white">1</div>
                             <div className="bg-red-600">2</div>
                             <div className="bg-blue-600">3</div>
                             <div className="bg-yellow-400">4</div>
-                            <div className="bg-red-600">2</div>
-                            <div className="bg-blue-600">3</div>
-                            <div className="bg-yellow-400">4</div>
-                            <div className="bg-white">1</div>
-                            <div className="bg-blue-600">3</div>
-                            <div className="bg-yellow-400">4</div>
-                            <div className="bg-white">1</div>
-                            <div className="bg-red-600">2</div>
-                            <div className="bg-yellow-400">4</div>
-                            <div className="bg-white">1</div>
-                            <div className="bg-red-600">2</div>
-                            <div className="bg-blue-600">3</div>
                         </div>
                     </section>
                 )} 
