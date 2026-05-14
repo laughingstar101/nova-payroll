@@ -68,33 +68,40 @@ export default function CompanyRegister() {
                 alert("Signup error. Please try again.");
             }
         } else {
-            const { error: insertError } = await supabase
+            const { data: companyData, error: companyError } = await supabase
                 .from('Company')
                 .insert({
-                company_id: authData.user.id,
-                company_email: companyFormData.companyEmail,
-                company_name: companyFormData.companyName
-                });
+                    company_id: authData.user.id,
+                    company_email: companyFormData.companyEmail,
+                    company_name: companyFormData.companyName
+                })
+                .select('id')
+                .single();
 
-            const { error: employeeInsertError } = await supabase
-                .from("Employee")
+            if (companyError) {
+                console.error("Company insert error: ", companyError);
+                alert('Failed to create company record.');
+                setIsSubmitting(false);
+                return;
+            }
+
+            const { error: employeeError } = await supabase
+                .from('Employee')
                 .insert({
-                    employee_id: authData.user.id,
                     employee_email: companyFormData.companyEmail,
                     employee_name: 'HR ' + companyFormData.companyName,
-                    type: 'HR'
+                    type: 'HR',
+                    employee_company: companyData.id  
                 });
 
-            if (insertError || employeeInsertError ) {
-                alert("Error occurred. Please try again later.");
-                console.error('Insert error:', insertError);
-            }
-            else {
+            if (employeeError) {
+                console.error('Employee insert error:', employeeError);
+                alert('Company created but employee record failed.');
+            } else {
                 alert('Registration successful!');
-                navigate("/dashboard")
-            }
+                navigate('/dashboard');
+            };
         }
-        setIsSubmitting(false)
     }
 
     const handleLoginChange = (e) => {
