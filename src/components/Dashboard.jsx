@@ -135,19 +135,21 @@ export default function Dashboard() {
                         <p className="text-white text-3xl font-bold">Welcome back, HR</p>
                         <div className="w-full mt-4 flex md:flex-row flex-col md:gap-0 gap-2 justify-between">
                             <p className="text-white text-lg">Amount of employees: {employeeList.length}</p>
-                            <div className="flex gap-4">
+                            <div className="flex gap-4 md:flex-row flex-col">
                                 <p className="text-white text-lg">Amount to add employees</p>
-                                <input 
-                                    className="bg-white w-15 pl-4 rounded-md" 
-                                    placeholder="0" 
-                                    type="number"
-                                    value={amountToAddEmployee}
-                                    onChange={handleAmountChange}
-                                />
-                                <button className="cursor-pointer bg-complementary-colour rounded-sm px-2 hover:scale-110 transition-all" onClick={addEmployee}>Add</button>
+                                <div className="flex gap-2">
+                                    <input 
+                                        className="bg-white w-15 pl-4 rounded-md" 
+                                        placeholder="0" 
+                                        type="number"
+                                        value={amountToAddEmployee}
+                                        onChange={handleAmountChange}
+                                    />
+                                    <button className="cursor-pointer bg-complementary-colour rounded-sm px-2 hover:scale-110 hover:shadow-md shadow-black transition-all" onClick={addEmployee}>Add</button>
+                                </div>
                             </div>
                         </div>
-                        <table className="table-auto w-full mt-8 border-secondary-colour bg-complementary-colour2 p-4 rounded-2xl">
+                        <table className="table-auto w-full mt-8 border-secondary-colour bg-complementary-colour2 p-4">
                             <thead>
                                 <tr>
                                     <th className="text-white sm:text-xl text-md uppercase text-center py-2 bg-secondary-colour2">id</th>
@@ -159,15 +161,15 @@ export default function Dashboard() {
                             </thead>
                             <tbody>
                                 {employeeList.map(emp => (
-                                    <tr key={emp.id}>
+                                    <tr key={emp.id} className="border-b border-gray-500 border-r">
                                         <td>
-                                            <p className="text-center">{emp.id}</p>
+                                            <div className="text-center">{emp.id}</div>
                                         </td>
                                         <td>
                                             <input 
                                                 type="text" 
-                                                className="bg-gray-100 w-full px-2 py-1"
-                                                placeholder="Name"
+                                                className="bg-gray-100 w-full px-2 py-1 border-r-2"
+                                                placeholder=""
                                                 value={emp.name}
                                                 onChange={(e) => handleEmployeeChange(emp.id, 'name', e.target.value)}
                                             />
@@ -175,8 +177,8 @@ export default function Dashboard() {
                                         <td>
                                             <input 
                                                 type="email" 
-                                                className="bg-gray-100 w-full px-2 py-1"
-                                                placeholder="Email"
+                                                className="bg-gray-100 w-full px-2 py-1 border-r-2"
+                                                placeholder=""
                                                 value={emp.email}
                                                 onChange={(e) => handleEmployeeChange(emp.id, 'email', e.target.value)}
                                             />
@@ -185,14 +187,14 @@ export default function Dashboard() {
                                             <input 
                                                 type="text" 
                                                 className="bg-gray-100 w-full px-2 py-1"
-                                                placeholder="Role"
+                                                placeholder=""
                                                 value={emp.role}
                                                 onChange={(e) => handleEmployeeChange(emp.id, 'role', e.target.value)}
                                             />
                                         </td>
                                         <td>
                                             <button 
-                                                className="bg-red-500 text-white px-2 py-1 hover:bg-red-600 w-full"
+                                                className="bg-red-700 text-white px-2 py-1 hover:bg-red-800 w-full"
                                                 onClick={() => deleteEmployee(emp.id)}
                                             >
                                                 Delete
@@ -204,7 +206,7 @@ export default function Dashboard() {
                         </table>
                         {employeeList.length > 0 && (
                             <button
-                                className="mt-4 bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition-all" 
+                                className="mt-4 bg-green-600 text-white px-6 py-2 rounded-md hover:scale-105 hover:shadow-md shadow-black hover:cursor-pointer transition-all" 
                                 onClick={submitEmployees}
                                 >Save All Employees
                             </button>
