@@ -89,41 +89,35 @@ export default function Dashboard() {
             <div className="container bg-primary-colour mx-auto flex flex-col items-center mt-12 px-12 py-8 rounded-md shadow-xl">
                 {employee && employee.type === 'HR' && (
                     <section className="w-full flex flex-col items-center">
-                        <p className="text-white text-2xl">Welcome back, HR</p>
+                        <p className="text-white text-2xl font-bold">Welcome back, HR</p>
                         <div className="w-full mt-4 flex md:flex-row flex-col md:gap-0 gap-2 justify-between">
                             <p className="text-white text-lg">Amount of employees: {}</p>
                             <div className="flex gap-4">
                                 <p className="text-white text-lg">Amount to add employees</p>
                                 <input 
                                     className="bg-white w-15 pl-4 rounded-md" 
-                                    placeholder="5" 
+                                    placeholder="0" 
                                     type="number"
                                     onChange={handleAmountChange}
                                 />
                             </div>
                         </div>
-                        <div className="grid grid-cols-4 w-full mt-8 border-secondary-colour gap-2 bg-complementary-colour2 p-4 rounded-md">
-                            <div className="text-white sm:text-xl text-md uppercase text-center py-2 rounded-md bg-secondary-colour2">Id</div>
-                            <div className="text-white sm:text-xl text-md uppercase text-center py-2 rounded-md bg-secondary-colour2">Name</div>
-                            <div className="text-white sm:text-xl text-md uppercase text-center py-2 rounded-md bg-secondary-colour2">Email</div>
-                            <div className="text-white sm:text-xl text-md uppercase text-center py-2 rounded-md bg-secondary-colour2">Type</div>
-                            <div className="bg-red-600">2</div>
-                            <div className="bg-blue-600">3</div>
-                            <div className="bg-yellow-400">4</div>
-                            <div className="bg-white">1</div>
-                            <div className="bg-blue-600">3</div>
-                            <div className="bg-yellow-400">4</div>
-                            <div className="bg-white">1</div>
-                            <div className="bg-red-600">2</div>
-                            <div className="bg-yellow-400">4</div>
-                            <div className="bg-white">1</div>
-                            <div className="bg-red-600">2</div>
-                            <div className="bg-blue-600">3</div>
-                            <div className="bg-white">1</div>
-                            <div className="bg-red-600">2</div>
-                            <div className="bg-blue-600">3</div>
-                            <div className="bg-yellow-400">4</div>
-                        </div>
+                        <table className="table-auto w-full mt-8 border-secondary-colour bg-complementary-colour2 p-4 rounded-md">
+                            <thead>
+                                <tr>
+                                    <th className="text-white sm:text-xl text-md uppercase text-center py-2 bg-secondary-colour2">id</th>
+                                    <th className="text-white sm:text-xl text-md uppercase text-center py-2 bg-secondary-colour2">name</th>
+                                    <th className="text-white sm:text-xl text-md uppercase text-center py-2 bg-secondary-colour2">email</th>
+                                    <th className="text-white sm:text-xl text-md uppercase text-center py-2 bg-secondary-colour2">role</th>
+                                </tr>
+                                <tr>
+                                    <th className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">1</th>
+                                    <th className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">Sham</th>
+                                    <th className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">sham@email.com</th>
+                                    <th className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">Admin</th>
+                                </tr>
+                            </thead>
+                        </table>
                     </section>
                 )} 
                 {employee && employee.type !== 'HR' && (
