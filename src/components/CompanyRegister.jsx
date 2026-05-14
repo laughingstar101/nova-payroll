@@ -61,6 +61,8 @@ export default function CompanyRegister() {
         if (signUpError) {
             if (signUpError.status === 429) {
                 alert("Too many registration attempts. Please wait a few minutes before trying again.");
+            } else if (signUpError.status === 422) {
+                alert("Email already exists. Please try again.")
             } else {
                 console.error('Signup error:', signUpError.message)
                 alert("Signup error. Please try again.");
@@ -74,7 +76,19 @@ export default function CompanyRegister() {
                 company_name: companyFormData.companyName
                 });
 
-            if (insertError) console.error('Insert error:', insertError);
+            const { error: employeeInsertError } = await supabase
+                .from("Employee")
+                .insert({
+                    employee_id: authData.user.id,
+                    employee_email: companyFormData.companyEmail,
+                    employee_name: 'HR ' + companyFormData.companyName,
+                    type: 'HR'
+                });
+
+            if (insertError || employeeInsertError ) {
+                alert("Error occurred. Please try again later.");
+                console.error('Insert error:', insertError);
+            }
             else {
                 alert('Registration successful!');
                 navigate("/dashboard")
