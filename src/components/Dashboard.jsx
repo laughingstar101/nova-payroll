@@ -13,6 +13,7 @@ export default function Dashboard() {
         const fetchData = async () => {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) {
+                alert("User not found. Redirecting..");
                 navigate("/");
                 return;
             }
@@ -45,7 +46,7 @@ export default function Dashboard() {
                 console.error("Error fetching data:", error);
                 setEmployee(null);
                 setCompany(null);
-                alert("Error fetching data from database.")
+                alert("Error fetching data from database.");
             } finally {
                 setLoading(false);
             }
