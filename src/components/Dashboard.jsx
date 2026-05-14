@@ -7,6 +7,8 @@ export default function Dashboard() {
     const [company, setCompany] = useState(null);
     const [employee, setEmployee] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [amountToAddEmployee, setAmountToAddEmployee] = useState(0);
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -63,6 +65,12 @@ export default function Dashboard() {
         );
     }
 
+    const handleAmountChange = (e) => {
+        const { value } = e.target;
+        setAmountToAddEmployee(value);
+        console.log(amountToAddEmployee)
+    }
+
     const employeeCount = 0;
 
     return (
@@ -82,14 +90,23 @@ export default function Dashboard() {
                 {employee && employee.type === 'HR' && (
                     <section className="w-full flex flex-col items-center">
                         <p className="text-white text-2xl">Welcome back, HR</p>
-                        <div className="w-full mt-4">
+                        <div className="w-full mt-4 flex md:flex-row flex-col md:gap-0 gap-2 justify-between">
                             <p className="text-white text-lg">Amount of employees: {}</p>
+                            <div className="flex gap-4">
+                                <p className="text-white text-lg">Amount to add employees</p>
+                                <input 
+                                    className="bg-white w-15 pl-4 rounded-md" 
+                                    placeholder="5" 
+                                    type="number"
+                                    onChange={handleAmountChange}
+                                />
+                            </div>
                         </div>
-                        <div className="grid grid-cols-4 w-full mt-8 border-secondary-colour gap-2 bg-white p-4 rounded-md">
-                            <div className="text-white sm:text-xl text-md uppercase text-center py-2 rounded-md border-2 border-secondary-colour2 bg-cyan-700">Id</div>
-                            <div className="text-white sm:text-xl text-md uppercase text-center py-2 rounded-md border-2 border-secondary-colour2 bg-cyan-700">Name</div>
-                            <div className="text-white sm:text-xl text-md uppercase text-center py-2 rounded-md border-2 border-secondary-colour2 bg-cyan-700">Email</div>
-                            <div className="text-white sm:text-xl text-md uppercase text-center py-2 rounded-md border-2 border-secondary-colour2 bg-cyan-700">Type</div>
+                        <div className="grid grid-cols-4 w-full mt-8 border-secondary-colour gap-2 bg-complementary-colour2 p-4 rounded-md">
+                            <div className="text-white sm:text-xl text-md uppercase text-center py-2 rounded-md bg-secondary-colour2">Id</div>
+                            <div className="text-white sm:text-xl text-md uppercase text-center py-2 rounded-md bg-secondary-colour2">Name</div>
+                            <div className="text-white sm:text-xl text-md uppercase text-center py-2 rounded-md bg-secondary-colour2">Email</div>
+                            <div className="text-white sm:text-xl text-md uppercase text-center py-2 rounded-md bg-secondary-colour2">Type</div>
                             <div className="bg-red-600">2</div>
                             <div className="bg-blue-600">3</div>
                             <div className="bg-yellow-400">4</div>
