@@ -67,15 +67,6 @@ export default function Dashboard() {
         );
     }
 
-    const generateTempPassword = () => {
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
-        let password = '';
-        for (let i = 0; i < 12; i++) {
-            password += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        return password;
-    };
-
     const handleAmountChange = (e) => {
         const value = parseInt(e.target.value, 10) || 0;
         setAmountToAddEmployee(value);
@@ -111,23 +102,33 @@ export default function Dashboard() {
             alert("Please fill in all fields for each employee.");
             return;
         }
-        // add supabase create
-        const { error } = await supabase
-            .from('Employee')
-            .insert(employeeList.map(emp => ({
-                employee_name: emp.name,
-                employee_email: emp.email,
-                type: emp.type,
-                employee_company: company.id
-            })));
 
-        if (error) alert("Error submitting employees: ", error.message)
-        else {
-            alert (`${employeeList.length} employees added.`);
-            setEmployeeList([]);
-            setNextId(1);
-            setAmountToAddEmployee(0);
-        } 
+        for (const emp of employeeList) {
+            const tempPassword = '123456';
+            const { error: signUpError } = await supabase.auth.signUp({
+                email: emp.email,
+                password: tempPassword,
+                options: {
+                    data: {
+                        employee_name: emp.name,
+                        type: emp.type,
+                        company_id: company.id
+                    }
+                }
+            });
+            if (signUpError) {
+                alert(`Failed to create auth account for ${emp.email}: ${signUpError.message}`);
+                return;
+            }
+            const { error: resetError } = await supabase.auth.resetPasswordForEmail(emp.email);
+            if (resetError) {
+                console.warn(`Could not send reset email to ${emp.email}:`, resetError.message);
+            }
+        }
+        alert (`${employeeList.length} employees added. Password reset emails has been sent`);
+        setEmployeeList([]);
+        setNextId(1);
+        setAmountToAddEmployee(0);
     }
 
     return (
