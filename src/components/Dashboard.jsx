@@ -64,34 +64,34 @@ export default function Dashboard() {
     }
 
     return (
-        <div>
+        <div className="min-h-screen flex flex-col bg-linear-to-br from-secondary-colour to-secondary-colour2">
             <TopBar />
-            <a
-                onClick={async () => {
-                    await supabase.auth.signOut();
-                    navigate("/");
-                }}
-                className="flex items-center gap-2 text-white text-xl cursor-pointer text-center hover:underline pl-4 mt-2"
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
-                    <path d="m368-417 202 202-90 89-354-354 354-354 90 89-202 202h466v126H368Z" />
-                </svg>
-                back to register
-            </a>
-            <h1>Hello world</h1>
-            {employee ? (
-                <>
-                    <p className="text-white">Employee: {employee.employee_name}</p>
-                    <p className="text-white">Type: {employee.type}</p>
-                </>
-            ) : (
-                <p className="text-yellow-300">Employee data not found.</p>
-            )}
-            {company ? (
-                <p className="text-white">Company: {company.company_name}</p>
-            ) : (
-                <p className="text-yellow-300">Company data not found.</p>
-            )}
+            <div className="absolute md:top-6 top-22">
+                <a onClick={async () => { await supabase.auth.signOut(); navigate("/"); }}
+                    className="flex items-center gap-2 text-white text-xl cursor-pointer text-center hover:underline pl-4 mt-2"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
+                        <path d="m368-417 202 202-90 89-354-354 354-354 90 89-202 202h466v126H368Z" />
+                    </svg>
+                    back to register
+                </a>
+            </div>
+            <div className="container bg-primary-colour mx-auto py-4 flex flex-col items-center mt-12">
+                {employee && employee.type === 'HR' && (
+                    <section>
+                        <p className="text-white text-2xl">Welcome back, HR</p>
+                        <div>
+                            
+                        </div>
+                    </section>
+                )} 
+                {employee && employee.type !== 'HR' && (
+                    <p className="text-white text-2xl">Welcome, {employee.employee_name}</p>
+                )}
+                {!employee && (
+                    <p>Employee data loading...</p>
+                )}
+            </div>
         </div>
     );
 }
