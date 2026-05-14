@@ -71,8 +71,6 @@ export default function Dashboard() {
         console.log(amountToAddEmployee)
     }
 
-    const employeeCount = 0;
-
     return (
         <div className="min-h-screen flex flex-col bg-linear-to-br from-secondary-colour to-secondary-colour2">
             <TopBar />
@@ -89,7 +87,7 @@ export default function Dashboard() {
             <div className="container bg-primary-colour mx-auto flex flex-col items-center mt-12 px-12 py-8 rounded-md shadow-xl">
                 {employee && employee.type === 'HR' && (
                     <section className="w-full flex flex-col items-center">
-                        <p className="text-white text-2xl font-bold">Welcome back, HR</p>
+                        <p className="text-white text-3xl font-bold">Welcome back, HR</p>
                         <div className="w-full mt-4 flex md:flex-row flex-col md:gap-0 gap-2 justify-between">
                             <p className="text-white text-lg">Amount of employees: {}</p>
                             <div className="flex gap-4">
@@ -110,13 +108,39 @@ export default function Dashboard() {
                                     <th className="text-white sm:text-xl text-md uppercase text-center py-2 bg-secondary-colour2">email</th>
                                     <th className="text-white sm:text-xl text-md uppercase text-center py-2 bg-secondary-colour2">role</th>
                                 </tr>
+                            </thead>
+                            <tbody>
                                 <tr>
                                     <th className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">1</th>
                                     <th className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">Sham</th>
                                     <th className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">sham@email.com</th>
                                     <th className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">Admin</th>
                                 </tr>
-                            </thead>
+                                <tr>
+                                    <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">2</td>
+                                    <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">John Doe</td>
+                                    <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">john@company.com</td>
+                                    <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">Manager</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">3</td>
+                                    <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">Jane Smith</td>
+                                    <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">jane@company.com</td>
+                                    <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">HR</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">4</td>
+                                    <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">Mike Johnson</td>
+                                    <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">mike@company.com</td>
+                                    <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">Developer</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">5</td>
+                                    <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">Sarah Lee</td>
+                                    <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">sarah@company.com</td>
+                                    <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">Designer</td>
+                                </tr>
+                            </tbody>
                         </table>
                     </section>
                 )} 
