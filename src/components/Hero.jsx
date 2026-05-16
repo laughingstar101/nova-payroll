@@ -10,7 +10,7 @@ export default function Hero() {
     };
 
     return (
-        <div className="h-screen flex flex-col items-center overflow-hidden relative">
+        <div className="h-screen flex flex-col items-center overflow-hidden relative bg-secondary-colour3">
             <img 
                 src={vectorBg} 
                 className="absolute inset-0 w-full h-full object-cover z-0 select-none" 
