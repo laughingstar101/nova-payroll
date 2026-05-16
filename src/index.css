@@ -7,6 +7,8 @@
     --color-secondary-colour3: #636329;
     --color-complementary-colour: rgb(226, 211, 30);
     --color-complementary-colour2: #CDCAE3;
+
+    --font-hero: "Sekuya", sans-serif
 }
 
 :root {
