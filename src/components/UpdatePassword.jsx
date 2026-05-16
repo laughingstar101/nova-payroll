@@ -15,7 +15,7 @@ export default function UpdatePassword() {
       alert(error.message);
     } else {
       alert("Password updated! Please log in.");
-      navigate("/"); 
+      navigate("/company-register"); 
     }
   }
 
