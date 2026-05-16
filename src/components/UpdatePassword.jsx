@@ -20,7 +20,7 @@ export default function UpdatePassword() {
   }
 
   return (
-    <section className="min-h-screen flex flex-col items-center bg-linear-to-br from-secondary-colour to-secondary-colour2">
+    <section className="min-h-screen flex flex-col items-center bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
         <TopBar/>   
         <div className="max-w-2xl w-4/5 rounded-xl flex flex-col items-center mt-12 bg-primary-colour shadow-xl">
             <form onSubmit={handleUpdate} className="flex flex-col gap-12 items-center px-12 py-12 bg-primary-colour shadow-xl">
