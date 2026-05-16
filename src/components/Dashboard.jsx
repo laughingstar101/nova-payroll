@@ -132,7 +132,7 @@ export default function Dashboard() {
     }
 
     return (
-        <div className="min-h-screen flex flex-col bg-linear-to-br from-secondary-colour to-secondary-colour2">
+        <div className="min-h-screen flex flex-col bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
             <TopBar />
             <div className="absolute md:top-6 top-22">
                 <a onClick={async () => { await supabase.auth.signOut(); navigate("/"); }}

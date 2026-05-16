@@ -10,7 +10,7 @@ export default function Hero() {
     };
 
     return (
-        <div className="h-screen flex flex-col items-center overflow-hidden relative">
+        <div className="h-screen flex flex-col items-center overflow-hidden relative bg-secondary-colour3">
             <img 
                 src={vectorBg} 
                 className="absolute inset-0 w-full h-full object-cover z-0 select-none" 
@@ -34,8 +34,8 @@ export default function Hero() {
                     <span className='text-white text-shadow-sm text-shadow-black text-7xl font-hero! text-left'>v</span>
                     <span className='text-white text-shadow-sm text-shadow-black text-7xl font-hero! text-left'>a</span>
                 </span>
-                <p className='text-complementary-colour text-shadow-sm text-shadow-black text-6xl font-hero! text-left'>Payroll System</p>
-                <p className='text-slate-300 text-xl font-hero! text-left mt-2'>
+                <p className='text-complementary-colour opacity-90 text-shadow-sm text-shadow-black text-6xl font-hero! text-left tracking-wider'>Payroll System</p>
+                <p className='text-white text-xl font-hero! text-left mt-2 tracking-wider'>
                     Use our system to launch your company's payroll management to new heights!
                 </p>
                 <button 

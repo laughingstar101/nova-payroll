@@ -24,6 +24,10 @@ export default function CompanyRegister() {
         newPassword: ''
     });
 
+    const handleToHome = () => {
+        navigate('/');
+    }
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setCompanyFormData(prev => ({ ...prev, [name]: value }));
@@ -149,7 +153,7 @@ export default function CompanyRegister() {
     }
 
     return (
-        <div className="min-h-screen flex flex-col items-center bg-linear-to-br from-secondary-colour to-secondary-colour2">
+        <div className="min-h-screen flex flex-col items-center bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
             <TopBar />
             <section className="max-w-2xl w-4/5 pt-12 pb-12 rounded-xl flex flex-col items-center mt-12 bg-primary-colour shadow-2xl">
             {!isResetPw ? (
@@ -281,7 +285,8 @@ export default function CompanyRegister() {
                     </form>
                 </section>
             )}
-                </section>
+            </section>
+            <p onClick={handleToHome} className="text-white text-center hover:cursor-pointer hover:underline text-lg mt-4">Back to home</p>
         </div>
     )
 }
