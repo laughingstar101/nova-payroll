@@ -4,17 +4,11 @@
     --color-primary-colour: rgb(49, 41, 99);
     --color-secondary-colour: rgb(72, 61, 139);
     --color-secondary-colour2: rgb(132, 120, 206);
-    --color-secondary-colour3: #636329;
+    --color-secondary-colour3: #5c3fac;
     --color-complementary-colour: rgb(226, 211, 30);
     --color-complementary-colour2: #CDCAE3;
 
     --font-hero: "Sekuya", sans-serif
-}
-
-:root {
-    --primary-colour: rgb(49, 41, 99);
-    --secondary-colour: rgb(72, 61, 139);
-    --secondary-colour2: rgb(132, 120, 206);
 }
 
 html, body, #root {
