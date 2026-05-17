@@ -151,10 +151,12 @@ export default function Dashboard() {
                 <img onClick={handleGoToProfile} src={profileImg} className="h-15 hover:cursor-pointer justify-self-end"></img>
             </div>
             <div className="container bg-primary-colour mx-auto flex flex-col items-center mt-12 px-12 py-8 rounded-md shadow-xl">
-                {/* {employee && employee.type === 'HR' && ( */}
+                {employee && employee.type === 'HR' && company && (
                     <section className="w-full flex flex-col items-center">
-                        <p className="text-white text-center text-3xl font-bold">Add Employees to {company.company_name}</p>
-                        <p className="text-white text-2xl text-center mt-2">Welcome back, {employee.type}</p>
+                        <p className="text-white text-center text-3xl font-bold">
+                            Add Employees to {company.company_name}
+                        </p>
+                        <p className="text-white text-2xl text-center mt-2">Welcome back, {employee.employee_name}</p>
                         <div className="w-full mt-4 flex md:flex-row flex-col md:gap-0 gap-2 justify-between">
                             <p className="text-white text-lg">Amount of employees: {employeeList.length}</p>
                             <div className="flex gap-4 md:flex-row flex-col">
@@ -206,13 +208,6 @@ export default function Dashboard() {
                                             />
                                         </td>
                                         <td>
-                                            {/* <input 
-                                                type="text" 
-                                                className="bg-gray-100 w-full px-2 py-1"
-                                                placeholder=""
-                                                value={emp.type}
-                                                onChange={(e) => handleEmployeeChange(emp.id, 'type', e.target.value)}
-                                            /> */}
                                                 <select
                                                     className="bg-gray-100 w-full px-2 py-1"
                                                     value={emp.type}
@@ -244,10 +239,10 @@ export default function Dashboard() {
                             </button>
                         )}
                     </section>
-                {/* )}  */}
-                {/* {employee && employee.type !== 'HR' && (
+                )}
+                {employee && employee.type !== 'HR' && (
                     <p className="text-white text-2xl">Welcome, {employee.employee_name}</p>
-                )} */}
+                )}
                 {!employee && (
                     <p>Employee data loading...</p>
                 )}
