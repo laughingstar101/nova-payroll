@@ -138,18 +138,18 @@ export default function Dashboard() {
 
     return (
         <div className="min-h-screen flex flex-col bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
-            <section className='bg-primary-colour w-full flex justify-between items-center py-4'>
+            <div className='bg-primary-colour w-full grid grid-cols-3 py-4 px-4'>
                 <a onClick={async () => { await supabase.auth.signOut(); navigate("/"); }}
-                    className="flex items-center gap-2 text-white text-xl cursor-pointer text-center hover:underline pl-4 mt-2 outline"
+                    className="flex items-center gap-2 text-white text-xl cursor-pointer text-center justify-self-start hover:underline pl-4 mt-2"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
                         <path d="m368-417 202 202-90 89-354-354 354-354 90 89-202 202h466v126H368Z" />
                     </svg>
                     back to register
                 </a>
-                <img src={logoImg} className="h-15" height='30'></img>
-                <img onClick={handleGoToProfile} src={profileImg} className="h-15"></img>
-            </section>
+                <img src={logoImg} className="h-15 justify-self-center" height='30'></img>
+                <img onClick={handleGoToProfile} src={profileImg} className="h-15 hover:cursor-pointer justify-self-end"></img>
+            </div>
             <div className="container bg-primary-colour mx-auto flex flex-col items-center mt-12 px-12 py-8 rounded-md shadow-xl">
                 {/* {employee && employee.type === 'HR' && ( */}
                     <section className="w-full flex flex-col items-center">
