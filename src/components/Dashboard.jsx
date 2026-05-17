@@ -157,21 +157,24 @@ export default function Dashboard() {
                             Add Employees to {company.company_name}
                         </p>
                         <p className="text-white text-2xl text-center mt-2">Welcome back, {employee.employee_name}</p>
-                        <div className="w-full mt-4 flex md:flex-row flex-col md:gap-0 gap-2 justify-between">
-                            <p className="text-white text-lg">Amount of employees: {employeeList.length}</p>
-                            <div className="flex gap-4 md:flex-row flex-col">
-                                <p className="text-white text-lg">Amount to add employees</p>
-                                <div className="flex gap-2">
-                                    <input 
-                                        className="bg-white w-15 pl-4 rounded-md" 
-                                        placeholder="0" 
-                                        type="number"
-                                        value={amountToAddEmployee}
-                                        onChange={handleAmountChange}
-                                    />
-                                    <button className="cursor-pointer bg-complementary-colour rounded-sm px-2 hover:scale-110 hover:shadow-md shadow-black transition-all" onClick={addEmployee}>Add</button>
+                        <div className="flex flex-col w-full">
+                            <div className="w-full mt-4 flex md:flex-row flex-col md:gap-0 gap-2 justify-between">
+                                <p className="text-white text-lg">Amount of employees: {employeeList.length}</p>
+                                <div className="flex gap-4 md:flex-row flex-col">
+                                    <p className="text-white text-lg">Amount to add employees</p>
+                                    <div className="flex gap-2">
+                                        <input 
+                                            className="bg-white w-15 pl-4 rounded-md" 
+                                            placeholder="0" 
+                                            type="number"
+                                            value={amountToAddEmployee}
+                                            onChange={handleAmountChange}
+                                        />
+                                        <button className="cursor-pointer bg-complementary-colour rounded-sm px-2 hover:scale-110 hover:shadow-md shadow-black transition-all" onClick={addEmployee}>Add</button>
+                                    </div>
                                 </div>
                             </div>
+                            <p className="text-white text-lg justify-self-start">Company: {company.company_name}</p>
                         </div>
                         <table className="table-auto w-full mt-8 border-secondary-colour bg-complementary-colour2 p-4">
                             <thead>
