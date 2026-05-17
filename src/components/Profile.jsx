@@ -20,7 +20,7 @@ export default function Profile() {
             try {
                 const { data, error } = await supabase
                     .from('Employee')
-                    .select('employee_name')
+                    .select('employee_name, employee_email')
                     .eq('employee_email', user.email)
                     .single();
 
@@ -37,9 +37,13 @@ export default function Profile() {
         fetchData();
     }, [navigate])
 
+    const handleGoToDashboard = () => {
+        navigate('/dashboard');
+    }
+
     if (loading) {
         return (
-            <div className='min-w-screen h-full flex justify-center items-center'>
+            <div className='min-w-screen h-full flex justify-center items-center bg-linear-to-br from-secondary-colour3 to-secondary-colour2'>
                 <div className="loader"></div>
             </div>
         )
@@ -48,9 +52,13 @@ export default function Profile() {
     return (
         <div className="min-h-screen flex flex-col bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
             <TopBar/>
-            <div className="container m-auto flex flex-col gap-4 items-center py-8 rounded-xl bg-primary-colour shadow-xl">
-                <img className='w-40' src={profileImg}></img>
-                <p className='text-4xl text-white font-hero!'>{employee.employee_name}</p>
+            <div className='flex flex-col items-center m-auto w-full'>
+                <div className="container m-auto flex flex-col gap-4 items-center py-8 rounded-xl bg-primary-colour shadow-xl">
+                    <p className='text-6xl mb-12 text-white font-hero!'>{employee.employee_name}</p>
+                    <img className='w-40' src={profileImg}></img>
+                    <p>{employee.employee_email}</p>
+                    <p className='text-white mt-8 hover:underline hover:cursor-pointer' onClick={handleGoToDashboard}>Back to dashboard</p>
+                </div>
             </div>
         </div>
     )

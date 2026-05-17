@@ -62,7 +62,7 @@ export default function Dashboard() {
 
     if (loading) {
         return (
-            <div className="min-w-screen h-full flex justify-center items-center">
+            <div className="min-w-screen h-full flex justify-center items-center bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
                 <div className="loader"></div>
             </div>
         );
