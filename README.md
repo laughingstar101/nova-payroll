@@ -43,6 +43,9 @@ npm install
 ```
 npm run dev
 ```
+### Database Setup
+
+Execute the SQL in [`database/schema.sql`](database/schema.sql) in your Supabase SQL editor.
 
 ### Security Notes
 - Passwords are never stored client‑side; Supabase Auth handles hashing.
