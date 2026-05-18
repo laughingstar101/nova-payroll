@@ -13,7 +13,6 @@ The application allows companies to register, manage employees, and securely han
 - **Password Reset** – Secure password recovery via email.  
 - **Responsive UI** – Built with Tailwind CSS, works on desktop and mobile.  
 - **Authentication** – Fully managed by Supabase Auth.  
-- **Database Triggers** – Automatically create employee records when a new user signs up (using metadata).
 
 ## Tech Stack
 
