@@ -286,7 +286,7 @@ export default function CompanyRegister() {
                 </section>
             )}
             </section>
-            <p onClick={handleToHome} className="text-white text-center hover:cursor-pointer hover:underline text-lg mt-4">Back to home</p>
+            <p onClick={handleToHome} className="text-white text-center hover:cursor-pointer hover:underline text-lg mt-4 md:hidden flex">Back to home</p>
         </div>
     )
 }

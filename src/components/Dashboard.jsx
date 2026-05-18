@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../utils/supabase/supabase";
-import TopBar from "./TopBar";
+import logoImg from '../assets/logo.png'
+import profileImg from '../assets/profile-empty.png'
 
 export default function Dashboard() {
     const [company, setCompany] = useState(null);
@@ -61,7 +62,7 @@ export default function Dashboard() {
 
     if (loading) {
         return (
-            <div className="min-w-screen h-full flex justify-center items-center">
+            <div className="min-w-screen h-full flex justify-center items-center bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
                 <div className="loader"></div>
             </div>
         );
@@ -131,39 +132,49 @@ export default function Dashboard() {
         setAmountToAddEmployee(0);
     }
 
+    const handleGoToProfile = () => {
+        navigate('/profile');
+    }
+
     return (
         <div className="min-h-screen flex flex-col bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
-            <TopBar />
-            <div className="absolute md:top-6 top-22">
+            <div className='bg-primary-colour w-full grid grid-cols-3 py-4 px-4'>
                 <a onClick={async () => { await supabase.auth.signOut(); navigate("/"); }}
-                    className="flex items-center gap-2 text-white text-xl cursor-pointer text-center hover:underline pl-4 mt-2"
+                    className="flex items-center gap-2 text-white text-xl cursor-pointer text-center justify-self-start hover:underline pl-4 mt-2"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
                         <path d="m368-417 202 202-90 89-354-354 354-354 90 89-202 202h466v126H368Z" />
                     </svg>
                     back to register
                 </a>
+                <img src={logoImg} className="h-15 justify-self-center" height='30'></img>
+                <img onClick={handleGoToProfile} src={profileImg} className="h-15 hover:cursor-pointer justify-self-end"></img>
             </div>
             <div className="container bg-primary-colour mx-auto flex flex-col items-center mt-12 px-12 py-8 rounded-md shadow-xl">
-                {employee && employee.type === 'HR' && (
+                {employee && employee.type === 'HR' && company && (
                     <section className="w-full flex flex-col items-center">
-                        <p className="text-white text-center text-3xl font-bold">Add Employees to {company.company_name}</p>
-                        <p className="text-white text-2xl text-center mt-2">Welcome back, {employee.type}</p>
-                        <div className="w-full mt-4 flex md:flex-row flex-col md:gap-0 gap-2 justify-between">
-                            <p className="text-white text-lg">Amount of employees: {employeeList.length}</p>
-                            <div className="flex gap-4 md:flex-row flex-col">
-                                <p className="text-white text-lg">Amount to add employees</p>
-                                <div className="flex gap-2">
-                                    <input 
-                                        className="bg-white w-15 pl-4 rounded-md" 
-                                        placeholder="0" 
-                                        type="number"
-                                        value={amountToAddEmployee}
-                                        onChange={handleAmountChange}
-                                    />
-                                    <button className="cursor-pointer bg-complementary-colour rounded-sm px-2 hover:scale-110 hover:shadow-md shadow-black transition-all" onClick={addEmployee}>Add</button>
+                        <p className="text-white text-center text-3xl font-bold">
+                            Add Employees to {company.company_name}
+                        </p>
+                        <p className="text-white text-2xl text-center mt-2">Welcome back, {employee.employee_name}</p>
+                        <div className="flex flex-col w-full">
+                            <div className="w-full mt-4 flex md:flex-row flex-col md:gap-0 gap-2 justify-between">
+                                <p className="text-white text-lg">Amount of employees: {employeeList.length}</p>
+                                <div className="flex gap-4 md:flex-row flex-col">
+                                    <p className="text-white text-lg">Amount to add employees</p>
+                                    <div className="flex gap-2">
+                                        <input 
+                                            className="bg-white w-15 pl-4 rounded-md" 
+                                            placeholder="0" 
+                                            type="number"
+                                            value={amountToAddEmployee}
+                                            onChange={handleAmountChange}
+                                        />
+                                        <button className="cursor-pointer bg-complementary-colour rounded-sm px-2 hover:scale-110 hover:shadow-md shadow-black transition-all" onClick={addEmployee}>Add</button>
+                                    </div>
                                 </div>
                             </div>
+                            <p className="text-white text-lg justify-self-start">Company: {company.company_name}</p>
                         </div>
                         <table className="table-auto w-full mt-8 border-secondary-colour bg-complementary-colour2 p-4">
                             <thead>
@@ -200,13 +211,6 @@ export default function Dashboard() {
                                             />
                                         </td>
                                         <td>
-                                            {/* <input 
-                                                type="text" 
-                                                className="bg-gray-100 w-full px-2 py-1"
-                                                placeholder=""
-                                                value={emp.type}
-                                                onChange={(e) => handleEmployeeChange(emp.id, 'type', e.target.value)}
-                                            /> */}
                                                 <select
                                                     className="bg-gray-100 w-full px-2 py-1"
                                                     value={emp.type}
@@ -238,7 +242,7 @@ export default function Dashboard() {
                             </button>
                         )}
                     </section>
-                )} 
+                )}
                 {employee && employee.type !== 'HR' && (
                     <p className="text-white text-2xl">Welcome, {employee.employee_name}</p>
                 )}
