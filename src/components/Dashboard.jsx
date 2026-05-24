@@ -263,7 +263,7 @@ export default function Dashboard() {
                         <p className="text-white text-2xl text-center">Welcome, {employee.employee_name}</p>
                         <div className="flex justify-around md:flex-row flex-col items-center gap-4 w-full mt-4">
                             <button className="bg-complementary-colour2 text-lg w-lg py-2 rounded-md hover:cursor-pointer hover:scale-105 hover:shadow-md hover:shadow-black transition-all duration-100" onClick={() => navigate("/leave")}>Apply for leave</button> 
-                            <button className="bg-complementary-colour text-lg w-lg py-2 rounded-md">Scan attendance</button>
+                            <button className="bg-complementary-colour text-lg w-lg py-2 rounded-md hover:cursor-pointer hover:scale-105 hover:shadow-md hover:shadow-black transition-all duration-100" onClick={() => navigate("/attendance")}>Scan attendance</button>
                         </div>
                     </section>
                 )}

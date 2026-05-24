@@ -6,6 +6,7 @@ import UpdatePassword from "./components/UpdatePassword";
 import CompanyRegister from "./components/CompanyRegister";
 import Profile from "./components/Profile";
 import Leave from "./components/Leave"
+import Attendance from "./components/Attendance"
 
 export const router = createBrowserRouter([
     {path: "/", element: <App/>},
@@ -14,4 +15,5 @@ export const router = createBrowserRouter([
     {path: "/company-register", element: <CompanyRegister/>},
     {path: "/profile", element: <Profile/>},
     {path: "/leave", element: <Leave/>},
+    {path: "/attendance", element: <Attendance/>},
 ])  
