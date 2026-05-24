@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../utils/supabase/supabase";
 import logoImg from '../assets/logo.png'
 import profileImg from '../assets/profile-empty.png'
