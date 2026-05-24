@@ -147,10 +147,6 @@ export default function Dashboard() {
         setAmountToAddEmployee(0);
     }
 
-    const handleGoToProfile = () => {
-        navigate('/profile');
-    }
-
     return (
         <div className="min-h-screen flex flex-col bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
             <div className='bg-primary-colour w-full grid grid-cols-3 py-4 px-4'>
@@ -163,7 +159,7 @@ export default function Dashboard() {
                     back
                 </a>
                 <img src={logoImg} className="h-15 justify-self-center" height='30'></img>
-                <img onClick={handleGoToProfile} src={profileImg} className="h-15 hover:cursor-pointer justify-self-end"></img>
+                <img onClick={() => navigate("/profile")} src={profileImg} className="h-15 hover:cursor-pointer justify-self-end"></img>
             </div>
             <div className="container bg-primary-colour mx-auto flex flex-col items-center mt-12 px-12 py-8 rounded-md shadow-xl">
                 {employee && employee.type === 'HR' && company && (
