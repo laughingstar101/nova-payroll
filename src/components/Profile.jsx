@@ -90,7 +90,7 @@ export default function Profile() {
     }
 
     return (
-        <div className="min-h-screen w-full flex flex-col gap-4 bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
+        <div className="min-h-screen w-full flex flex-col bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
             <div className='bg-primary-colour w-full grid grid-cols-3 py-4 px-4'>
                 <a onClick={async () => { navigate(-1); }}
                     className="flex items-center gap-2 text-white text-xl cursor-pointer text-center justify-self-start hover:underline pl-4 mt-2"
@@ -102,38 +102,36 @@ export default function Profile() {
                 </a>
                 <img src={logoImg} className="h-15 justify-self-center" height='30'></img>
             </div>
-            <div className='w-full flex flex-col items-center'>
-                <p className='text-5xl mb-12 text-white font-hero!'>Profile</p>
-                <div className='flex flex-col items-center m-auto w-full'>
-                    <div className="container m-auto flex flex-col gap-4 items-center py-8 rounded-xl bg-primary-colour shadow-xl">
-                        <div className='flex flex-col items-center gap-4'>
-                            <img className='w-40' src={profileImg}></img>
-                            <form onSubmit={handleResetName} className='w-full' id='profile-form'>
-                                <p className='text-xl text-white text-left w-full'>Name: {employee.employee_name}</p>
-                                {updateName && (
-                                    <div className='flex flex-col gap-4'>
-                                        <input placeholder='New Name' value={newName} onChange={handleNameChange} className='bg-amber-50 w-full h-12! pl-2.5! mt-4'/>
-                                        <button 
-                                            className='text-black text-lg bg-complementary-colour2 px-4 py-2 rounded-lg hover:scale-105 transition-transform hover:shadow-md hover:shadow-black hover:cursor-pointer'
-                                            type='submit'
-                                            form='profile-form'
-                                        >Submit</button>
-                                    </div>
-                                )}
-                            </form>
-                            <p className='text-white text-xl text-left w-full'>Email: {employee.employee_email}</p>
-                            <div className='flex gap-4'>
-                                <button className='text-black text-lg bg-complementary-colour2 px-4 py-2 mt-4 rounded-lg hover:scale-105 transition-transform hover:shadow-md hover:shadow-black hover:cursor-pointer' onClick={() => navigate('/update-password')}>Reset Password</button>
-                                <button 
-                                    className='text-black text-lg bg-complementary-colour2 px-4 py-2 mt-4 rounded-lg hover:scale-105 transition-transform hover:shadow-md hover:shadow-black hover:cursor-pointer'
-                                    onClick={() => {
-                                        setUpdateName(!updateName);
-                                    }}
-                                    type={updateName ? 'submit' : 'button'}
-                                >{updateName ? "Back" : "Update Name"}</button>
-                            </div>
-                            <p className='text-white mt-8 hover:underline hover:cursor-pointer' onClick={() => navigate("/")}>Back to main menu</p>
+            <p className='text-5xl text-white font-hero! text-center mt-8'>Profile</p>
+            <div className='flex flex-col items-center w-full mt-4'>
+                <div className="container m-auto flex flex-col gap-4 items-center py-8 rounded-xl bg-primary-colour shadow-xl">
+                    <div className='flex flex-col items-center gap-4'>
+                        <img className='w-40' src={profileImg}></img>
+                        <form onSubmit={handleResetName} className='w-full' id='profile-form'>
+                            <p className='text-xl text-white text-left w-full'>Name: {employee.employee_name}</p>
+                            {updateName && (
+                                <div className='flex flex-col gap-4'>
+                                    <input placeholder='New Name' value={newName} onChange={handleNameChange} className='bg-amber-50 w-full h-12! pl-2.5! mt-4'/>
+                                    <button 
+                                        className='text-black text-lg bg-complementary-colour2 px-4 py-2 rounded-lg hover:scale-105 transition-transform hover:shadow-md hover:shadow-black hover:cursor-pointer'
+                                        type='submit'
+                                        form='profile-form'
+                                    >Submit</button>
+                                </div>
+                            )}
+                        </form>
+                        <p className='text-white text-xl text-left w-full'>Email: {employee.employee_email}</p>
+                        <div className='flex gap-4'>
+                            <button className='text-black text-lg bg-complementary-colour2 px-4 py-2 mt-4 rounded-lg hover:scale-105 transition-transform hover:shadow-md hover:shadow-black hover:cursor-pointer' onClick={() => navigate('/update-password')}>Reset Password</button>
+                            <button 
+                                className='text-black text-lg bg-complementary-colour2 px-4 py-2 mt-4 rounded-lg hover:scale-105 transition-transform hover:shadow-md hover:shadow-black hover:cursor-pointer'
+                                onClick={() => {
+                                    setUpdateName(!updateName);
+                                }}
+                                type={updateName ? 'submit' : 'button'}
+                            >{updateName ? "Back" : "Update Name"}</button>
                         </div>
+                        <p className='text-white mt-8 hover:underline hover:cursor-pointer' onClick={() => navigate("/")}>Back to main menu</p>
                     </div>
                 </div>
             </div>

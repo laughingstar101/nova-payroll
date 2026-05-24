@@ -78,8 +78,8 @@ export default function Leave() {
                 <img src={logoImg} className="h-15 justify-self-center" height='30'></img>
                 <img onClick={() => navigate("/profile")} src={profileImg} className="h-15 hover:cursor-pointer justify-self-end"></img>
             </div>
-            <p className='text-5xl mb-12 text-white font-hero! text-center'>Leave Application</p>
-            <div className="container bg-primary-colour mx-auto flex flex-col items-center mt-12 px-12 py-8 rounded-md shadow-xl">
+            <p className='text-5xl text-white font-hero! text-center mt-8'>Leave Application</p>
+            <div className="container bg-primary-colour mx-auto flex flex-col items-center px-12 py-8 rounded-md shadow-xl mt-4">
                 {employee == null || !employee && (
                     <p>Employee doesn't exist</p>
                 )}
