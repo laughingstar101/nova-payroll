@@ -263,8 +263,8 @@ export default function Dashboard() {
                         </div>
                     </section>
                 )}
-                {!employee && (
-                    <p>Employee data loading...</p>
+                {employee == null || !employee && (
+                    <p>Employee doesn't exist...</p>
                 )}
             </div>
         </div>

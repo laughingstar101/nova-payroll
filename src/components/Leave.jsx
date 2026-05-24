@@ -23,7 +23,7 @@ export default function Leave() {
                 // 1. Fetch employee using the logged‑in user's email
                 const { data: employeeData, error: employeeError } = await supabase
                     .from("Employee")
-                    .select("employee_name, employee_email, type, employee_company")
+                    .select("employee_name, type, employee_company")
                     .eq("employee_email", user.email)
                     .single();
 
@@ -77,6 +77,11 @@ export default function Leave() {
                 </a>
                 <img src={logoImg} className="h-15 justify-self-center" height='30'></img>
                 <img src={profileImg} className="h-15 hover:cursor-pointer justify-self-end"></img>
+            </div>
+            <div className="container bg-primary-colour mx-auto flex flex-col items-center mt-12 px-12 py-8 rounded-md shadow-xl">
+                {employee == null || !employee && (
+                    <p>Employee doesn't exist</p>
+                )}
             </div>
         </div>
     )
