@@ -121,10 +121,25 @@ export default function Dashboard() {
                 alert(`Failed to create auth account for ${emp.email}: ${signUpError.message}`);
                 return;
             }
+
+            const { error: insertError } = await supabase
+                .from("Employee")
+                .insert({
+                    employee_email: emp.email,
+                    employee_name: emp.name,
+                    type: emp.type,
+                    employee_company: company.id
+                });
+            if (insertError) {
+                console.error(`Failed to insert employee record for ${emp.email}:`, insertError);
+                alert(`Account created but failed to save employee details for ${emp.email}.`);
+            } 
+            
             const { error: resetError } = await supabase.auth.resetPasswordForEmail(emp.email);
             if (resetError) {
                 console.warn(`Could not send reset email to ${emp.email}:`, resetError.message);
             }
+
         }
         alert (`${employeeList.length} employees added. Password reset emails has been sent`);
         setEmployeeList([]);
