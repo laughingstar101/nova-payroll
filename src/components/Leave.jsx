@@ -141,14 +141,24 @@ export default function Leave() {
                         <div className="grid xl:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 w-full">
                             {leaveList.map(leave => (
                                 <div className="bg-complementary-colour2 p-2 rounded-sm flex flex-col gap-2">
-                                    <p className="text-black font-bold text-center">{leave.employee.employee_name}</p>
-                                    <span className="flex justify-between lg:flex-row sm:flex-col flex-row">
+                                    <span className="grid grid-cols-[1fr_auto_1fr]">
+                                        <div></div>
+                                        <p className="text-black text-lg font-bold text-center">{leave.employee.employee_name}</p>
+                                        <button className="bg-red-500 p-0.5 w-fit justify-self-end rounded-sm hover:cursor-pointer hover:scale-110">
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
+                                        </button>
+                                    </span>
+                                    <span className="flex justify-between lg:flex-row sm:flex-col max-[475px]:flex-col flex-row">
                                         <p className="text-black">{leave.employee.employee_email}</p>
                                         <p className="text-black">{leave.employee.type}</p>
                                     </span>
                                     <p><span className="font-bold">Type: </span>{leave.leave_type}</p>
                                     <p><span className="font-bold">Details: </span><p>{leave.details}</p></p>
                                     <p><span className="font-bold">Status: </span>{leave.status}</p>
+                                    <div className="flex gap-2">
+                                        <button className="bg-green-600 text-white py-1 hover:bg-green-700 hover:cursor-pointer w-full">Approve</button>
+                                        <button className="bg-red-700 text-white py-1 hover:bg-red-800 hover:cursor-pointer w-full">Reject</button>
+                                    </div>
                                 </div>
                             ))}
                         </div>
