@@ -12,7 +12,6 @@ export default function Leave() {
         leave_type: 'Annual Leave',
         details: ''
     });
-    const [employeeList, setEmployeeList] = useState([]);
     const [leaveList, setLeaveList] = useState([]);
 
     useEffect(() => {
@@ -34,16 +33,6 @@ export default function Leave() {
 
                 if (employeeError) throw employeeError;
                 setEmployee(employeeData);
-
-                // fetch all employees for hr display
-                const { data: employeeListData, error: employeeListError } = await supabase
-                    .from("Employee")
-                    .select("id, employee_name, employee_email, type")
-                    .eq("employee_company", employeeData.employee_company)
-                    .neq("type", 'HR');
-
-                if (employeeListError) throw employeeListError;
-                setEmployeeList(employeeListData);
 
                 // fetch all leave applications
                 const { data: leaveApplications, error: leaveError } = await supabase
