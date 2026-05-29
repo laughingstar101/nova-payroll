@@ -9,6 +9,10 @@ export default function Leave() {
     const [loading, setLoading] = useState(true);
     const [company, setCompany] = useState(null);
     const [employee, setEmployee] = useState(null);
+    const [leave, setLeave] = useState({
+        leave_type: '',
+        details: ''
+    });
 
     useEffect(() => {
         const fetchData = async () => {
@@ -64,6 +68,16 @@ export default function Leave() {
         );
     }
 
+    async function handleLeaveSubmit(e) {
+        e.PreventDefault();
+    }
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setLeave(prev => ({ ...prev, [name]: value}));
+        console.log(leave);
+    }
+
     return (
         <div className="min-h-screen flex flex-col bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
             <div className='bg-primary-colour w-full grid grid-cols-3 py-4 px-4'>
@@ -80,6 +94,30 @@ export default function Leave() {
             </div>
             <p className='text-5xl text-white font-hero! text-center mt-8'>Leave Application</p>
             <div className="container bg-primary-colour mx-auto flex flex-col items-center px-12 py-8 rounded-md shadow-xl mt-4">
+                {employee && employee.type !== "HR" && (
+                    <div className="w-full">
+                        <p className="text-white text-2xl text-center">Hello, {employee.employee_name} !</p>
+                        <form className="mx-auto w-fit flex flex-col gap-2" onSubmit={handleLeaveSubmit}>
+                            <div className="flex items-center gap-4 mt-8">
+                                <p className="text-white text-lg">Leave type</p>
+                                <select name="leave_type" className="bg-gray-100 px-2 py-1" onChange={handleInputChange}>
+                                    <option value="Annual Leave">Annual Leave</option>
+                                    <option value="Sick Leave">Sick Leave</option>
+                                    <option value="Rest Day">Rest Day</option>
+                                    <option value="Public Holida Leavey">Public Holiday Leave</option>
+                                    <option value="Maternity Leave">Maternity Leave</option>
+                                    <option value="Paternity Leave">Paternity Leave</option>
+                                    <option value="Hospitalization Leave">Hospitalization Leave</option>
+                                </select>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <p className="text-white text-lg">Details</p>
+                                <textarea onChange={handleInputChange} name="details" className="bg-white w-full px-2 resize-y h-24" placeholder="Your text here"></textarea>
+                            </div>
+                            <button type="submit"></button>
+                        </form>
+                    </div>
+                )}
                 {employee == null || !employee && (
                     <p>Employee doesn't exist</p>
                 )}
