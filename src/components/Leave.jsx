@@ -91,6 +91,9 @@ export default function Leave() {
     }
 
     const handleLeaveDelete = async (leaveId) => {
+        const input = confirm("Are you sure you want to DELETE this leave application?");
+        if (!input) return;
+
         const { error } = await supabase
             .from("Leave")
             .delete()
