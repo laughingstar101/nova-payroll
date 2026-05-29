@@ -147,18 +147,20 @@ export default function Leave() {
                 <p className="text-white text-2xl text-center">Hello, {employee.employee_name} !</p>
                 {employee && employee.type !== "HR" && (
                     <div className="w-full">
-                        <form className="mx-auto w-fit flex flex-col gap-4" onSubmit={handleLeaveSubmit}>
+                        <form className="mx-auto max-w-full w-120 flex flex-col gap-4" onSubmit={handleLeaveSubmit}>
                             <div className="flex gap-2 mt-8 md:flex-row flex-col md:items-center justify-center">
-                                <p className="text-white text-lg">Leave type</p>
-                                <select name="leave_type" className="bg-gray-100 px-2 py-1" onChange={handleInputChange}>
-                                    <option value="Annual Leave">Annual Leave</option>
-                                    <option value="Sick Leave">Sick Leave</option>
-                                    <option value="Rest Day">Rest Day</option>
-                                    <option value="Public Holida Leavey">Public Holiday Leave</option>
-                                    <option value="Maternity Leave">Maternity Leave</option>
-                                    <option value="Paternity Leave">Paternity Leave</option>
-                                    <option value="Hospitalization Leave">Hospitalization Leave</option>
-                                </select>
+                                <div className="flex flex-col gap-2 w-full">
+                                    <p className="text-white text-lg">Leave type</p>
+                                    <select name="leave_type" className="bg-gray-100 px-2 py-1" onChange={handleInputChange}>
+                                        <option value="Annual Leave">Annual Leave</option>
+                                        <option value="Sick Leave">Sick Leave</option>
+                                        <option value="Rest Day">Rest Day</option>
+                                        <option value="Public Holida Leavey">Public Holiday Leave</option>
+                                        <option value="Maternity Leave">Maternity Leave</option>
+                                        <option value="Paternity Leave">Paternity Leave</option>
+                                        <option value="Hospitalization Leave">Hospitalization Leave</option>
+                                    </select>
+                                </div>
                             </div>
                             <div className="flex flex-col gap-2">
                                 <p className="text-white text-lg">Details</p>
@@ -168,7 +170,7 @@ export default function Leave() {
                         </form>
                     </div>
                 )}
-                {employee && employee.type == 'HR' && (
+                {employee && employee.type === 'HR' && (
                     <div className="w-full mt-8">
                         <p className="text-white text-md mb-4">Num. of leave applications: {leaveList.length}</p>
                         <div className="grid xl:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 w-full">
