@@ -73,16 +73,16 @@ export default function Leave() {
                     </svg>
                     back
                 </a>
-                <img src={logoImg} className="h-15 justify-self-center" height='30'></img>
+                <img src={logoImg} className="h-15 justify-self-center md:visible invisible" height='30'></img>
                 <img onClick={() => navigate("/profile")} src={profileImg} className="h-15 hover:cursor-pointer justify-self-end"></img>
             </div>
             <p className='text-5xl text-white font-hero! text-center mt-8'>Leave Application</p>
-            <div className="container bg-primary-colour mx-auto flex flex-col items-center px-12 py-8 rounded-md shadow-xl mt-4">
+            <div className="container bg-primary-colour mx-auto flex flex-col items-center px-12 py-8 rounded-md shadow-xl mt-6">
                 {employee && employee.type !== "HR" && (
                     <div className="w-full">
                         <p className="text-white text-2xl text-center">Hello, {employee.employee_name} !</p>
-                        <form className="mx-auto w-fit flex flex-col gap-2" onSubmit={handleLeaveSubmit}>
-                            <div className="flex items-center gap-4 mt-8">
+                        <form className="mx-auto w-fit flex flex-col gap-4" onSubmit={handleLeaveSubmit}>
+                            <div className="flex gap-2 mt-8 md:flex-row flex-col md:items-center justify-center">
                                 <p className="text-white text-lg">Leave type</p>
                                 <select name="leave_type" className="bg-gray-100 px-2 py-1" onChange={handleInputChange}>
                                     <option value="Annual Leave">Annual Leave</option>
@@ -98,7 +98,7 @@ export default function Leave() {
                                 <p className="text-white text-lg">Details</p>
                                 <textarea onChange={handleInputChange} name="details" className="bg-white w-full px-2 resize-y h-24" placeholder="Your text here"></textarea>
                             </div>
-                            <button type="submit"></button>
+                            <button type="submit" className="mt-4 uppercase bg-complementary-colour text-3xl w-full pt-2! pb-2! cursor-pointer hover:scale-105 transition-all">Submit</button>
                         </form>
                     </div>
                 )}
