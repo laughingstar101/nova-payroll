@@ -1,11 +1,52 @@
 import { useNavigate } from "react-router-dom";
 import profileImg from '../assets/profile-empty.png'
 import logoImg from '../assets/logo.png'
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "../utils/supabase/supabase";
 
 export default function Attendance() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false); // CHANGE BACK TO TRUE
+    const [employee, setEmployee] = useState(null);
+    const [attendance, setAttendance] = useState({
+        check_in: '',
+        check_out: '',
+        date: '',
+        status: '',
+        work_duration: ''
+    });
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                alert("User not found. Redirecting..");
+                navigate("/");
+                return;
+            }
+
+            try {
+                // 1. Fetch employee using the logged‑in user's email
+                const { data: employeeData, error: employeeError } = await supabase
+                    .from("Employee")
+                    .select("id, employee_name, type, employee_company")
+                    .eq("employee_email", user.email)
+                    .single();
+
+                if (employeeError) throw employeeError;
+                setEmployee(employeeData);
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                setEmployee(null);
+                alert("Error fetching data from database.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [navigate]);
 
     if (loading) {
         return (
