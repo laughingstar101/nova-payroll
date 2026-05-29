@@ -17,6 +17,7 @@ export default function Attendance() {
             day: 'numeric'
         });
     });
+    const [attendance, setAttendance] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -37,6 +38,17 @@ export default function Attendance() {
 
                 if (employeeError) throw employeeError;
                 setEmployee(employeeData);
+
+                const today = new Date().toISOString().split('T')[0];
+                const { data: attendanceData, error: attendanceError } = await supabase
+                    .from("Attendance")
+                    .select('*')
+                    .eq('employee_id', employeeData.id)
+                    .eq('date', today)
+                    .maybeSingle();
+
+                if (attendanceError) throw attendanceError;
+                setAttendance(attendanceData || null);
 
             } catch (error) {
                 console.error("Error fetching data:", error);
