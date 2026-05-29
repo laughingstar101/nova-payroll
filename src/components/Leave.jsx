@@ -13,6 +13,7 @@ export default function Leave() {
         details: ''
     });
     const [employeeList, setEmployeeList] = useState([]);
+    const [leaveList, setLeaveList] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -44,6 +45,15 @@ export default function Leave() {
                 if (employeeListError) throw employeeListError;
                 setEmployeeList(employeeListData);
 
+                // fetch all leave applications
+                const { data: leaveApplications, error: leaveError } = await supabase
+                    .from("Leave")
+                    .select(`*, employee:employee_id (employee_name, employee_email, type)`)
+                    .eq("employee.employee_company", employeeData.employee_company);
+
+                if (leaveError) throw leaveError;
+                setLeaveList(leaveApplications);
+
             } catch (error) {
                 console.error("Error fetching data:", error);
                 setEmployee(null);
@@ -55,6 +65,10 @@ export default function Leave() {
 
         fetchData();
     }, [navigate]);
+
+    useEffect(() => {
+        console.log(leaveList);
+    }, [leaveList])
 
     if (loading) {
         return (
