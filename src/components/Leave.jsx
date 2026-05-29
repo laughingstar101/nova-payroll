@@ -194,7 +194,7 @@ export default function Leave() {
                                             <span className={`px-1 ${leave.status !== 'PENDING' ? 'bg-red-300' : 'bg-none'}`}>{leave.status}</span>
                                         )}
                                     </p>
-                                    {leave.status === 'UNAPPROVED' && (
+                                    {leave.status === 'PENDING' && (
                                         <div className="flex gap-2">
                                             <button onClick={() => handleLeaveApprove(leave.id)} className='bg-green-600 text-white py-1 hover:bg-green-700 hover:cursor-pointer w-full'>Approve</button>
                                             <button onClick={() => handleLeaveReject(leave.id)} className="bg-red-700 text-white py-1 hover:bg-red-800 hover:cursor-pointer w-full">Reject</button>
