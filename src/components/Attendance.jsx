@@ -64,9 +64,6 @@ export default function Attendance() {
                 if (attendanceData?.check_in) setHasCheckedIn(true);
                 if (attendanceData?.check_out) setHasCheckedOut(true);
 
-                console.log("Checked in: ", hasCheckedIn);
-                console.log("Checked out: ", hasCheckedOut);
-
             } catch (error) {
                 console.error("Error fetching data:", error);
                 setEmployee(null);
@@ -115,12 +112,15 @@ export default function Attendance() {
             const now = new Date();
             const checkInTime = new Date(attendance.check_in);
             const durationHours = (now - checkInTime) / (1000 * 60 * 60);
+            const hours = Math.floor(durationHours);
+            const minutes = Math.round((durationHours % 1) * 60);
+            const intervalLiteral = `${hours} hours ${minutes} minutes`;
             const newStatus = durationHours >= 9 ? 'NORMAL' : 'INSUFFICIENT_HOURS';
             const { error } = await supabase
                 .from("Attendance")
                 .update({
                     check_out: now.toISOString(),
-                    work_duration: `${durationHours.toFixed(2)} hours`,
+                    work_duration: intervalLiteral,
                     status: newStatus
                 })
                 .eq('id', attendance.id);
@@ -130,7 +130,7 @@ export default function Attendance() {
             setAttendance(prev => ({
                 ...prev,
                 check_out: now.toISOString(),
-                work_duration: `${durationHours.toFixed(2)} hours`,
+                work_duration: intervalLiteral,
                 status: newStatus
             }));
             alert("Checked out successfully.");
