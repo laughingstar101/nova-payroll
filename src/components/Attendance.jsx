@@ -8,6 +8,7 @@ export default function Attendance() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true); // CHANGE BACK TO TRUE
     const [employee, setEmployee] = useState(null);
+    const [attendance, setAttendance] = useState(null);
     const [todayDate] = useState(() => {
         const now = new Date();
         return now.toLocaleDateString('en-GB', {
@@ -17,7 +18,10 @@ export default function Attendance() {
             day: 'numeric'
         });
     });
-    const [attendance, setAttendance] = useState(null);
+    const [isWeekday] = useState(() => {
+        const day = new Date().getDay();
+        return day >= 1 && day <= 5;
+    })
 
     useEffect(() => {
         const fetchData = async () => {
@@ -62,9 +66,10 @@ export default function Attendance() {
         fetchData();
     }, [navigate]);
 
-    const isWeekday = () => {
-        const day = new Date().getDay();
-        return day >= 1 && day <= 5; // mon = 1, fri = 5
+    const handleCheckIn = async () => {
+        if (!isWeekday) {
+            
+        }
     }
 
     if (loading) {
