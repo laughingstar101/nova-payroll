@@ -137,7 +137,14 @@ export default function Leave() {
                 )}
                 {employee && employee.type == 'HR' && (
                     <div className="w-full">
-
+                        <div className="grid xl:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 w-full">
+                            {leaveList.map(leave => (
+                                <div className="bg-complementary-colour2">
+                                    <p className="text-black">{leave.employee.employee_name}</p>
+                                    <p>{leave.leave_type}</p>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 )}
                 {employee == null || !employee && (
