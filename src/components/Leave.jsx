@@ -105,6 +105,9 @@ export default function Leave() {
     }
 
     const handleLeaveApprove = async (leaveId) => {
+        const input = confirm("Are you sure you want to APPROVE this leave application?");
+        if (!input) return;
+
         const { error } = await supabase
             .from("Leave")
             .update({ status: "APPROVED" })
@@ -119,6 +122,9 @@ export default function Leave() {
     }
 
     const handleLeaveReject = async (leaveId) => {
+        const input = confirm("Are you sure you want to REJECT this leave application?");
+        if (!input) return;
+
         const { error } = await supabase
             .from("Leave")
             .update({ status: "REJECTED" })
@@ -179,7 +185,7 @@ export default function Leave() {
                 )}
                 {employee && employee.type == 'HR' && (
                     <div className="w-full mt-8">
-                        <p className="text-white text-md mb-4">Num of leave applications: {leaveList.length}</p>
+                        <p className="text-white text-md mb-4">Num. of leave applications: {leaveList.length}</p>
                         <div className="grid xl:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 w-full">
                             {leaveList.map(leave => (
                                 <div className="bg-complementary-colour2 p-2 rounded-sm flex flex-col gap-2">
