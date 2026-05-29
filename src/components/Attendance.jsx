@@ -25,7 +25,6 @@ export default function Attendance() {
     const [hasCheckedIn, setHasCheckedIn] = useState(false);
     const [hasCheckedOut, setHasCheckedOut] = useState(false);
     const [actionLoading, setActionLoading] = useState(false);
-    const [status, setStatus] = useState('');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -53,14 +52,20 @@ export default function Attendance() {
                     .select('*')
                     .eq('employee_id', employeeData.id)
                     .eq('date', today)
+                    .limit(1)
                     .maybeSingle();
+                
+                console.log("Attendance fetch error:", attendanceError);
+                console.log("Attendance data:", attendanceData);
 
                 if (attendanceError) throw attendanceError;
                 setAttendance(attendanceData || null);
 
-                if (attendance?.check_in) {
-                    setHasCheckedIn(true);
-                }
+                if (attendanceData?.check_in) setHasCheckedIn(true);
+                if (attendanceData?.check_out) setHasCheckedOut(true);
+
+                console.log("Checked in: ", hasCheckedIn);
+                console.log("Checked out: ", hasCheckedOut);
 
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -91,15 +96,15 @@ export default function Attendance() {
                 .select()
                 .single();
             
-                if (error) throw error;
-                setAttendance(data);
-                alert("Checked in successfully.");
+            if (error) throw error;
+            setAttendance(data);
+            setHasCheckedIn(true);
+            alert("Checked in successfully.");
         } catch (error) {
             console.error(error);
             alert("Failed to check in. Please try again later.");
         } finally {
             setActionLoading(false);
-            setHasCheckedIn(true);
         }
     }
 
@@ -110,13 +115,13 @@ export default function Attendance() {
             const now = new Date();
             const checkInTime = new Date(attendance.check_in);
             const durationHours = (now - checkInTime) / (1000 * 60 * 60);
-            setStatus(durationHours >= 9 ? 'NORMAL' : 'INSUFFICIENT_HOURS');
+            const newStatus = durationHours >= 9 ? 'NORMAL' : 'INSUFFICIENT_HOURS';
             const { error } = await supabase
                 .from("Attendance")
                 .update({
-                    check_out: now.toISOString,
+                    check_out: now.toISOString(),
                     work_duration: `${durationHours.toFixed(2)} hours`,
-                    status: status
+                    status: newStatus
                 })
                 .eq('id', attendance.id);
                 
@@ -126,7 +131,7 @@ export default function Attendance() {
                 ...prev,
                 check_out: now.toISOString(),
                 work_duration: `${durationHours.toFixed(2)} hours`,
-                status: status
+                status: newStatus
             }));
             alert("Checked out successfully.");
         } catch (error) {
@@ -162,13 +167,20 @@ export default function Attendance() {
             </div>
             <div className="container bg-primary-colour mx-auto flex flex-col items-center px-12 py-8 rounded-md shadow-xl mt-6">
                 {isWeekday && (
-                    <section className="flex flex-col items-center">
+                    <section className="flex flex-col items-center gap-4">
                         <p className="text-white text-2xl text-center">Attendance for {todayDate}</p>
-                        {!hasCheckedIn && (
+                        {!hasCheckedIn && !hasCheckedOut && (
                             <button onClick={handleCheckIn} className="bg-green-400 text-3xl p-2 cursor-pointer hover:scale-105 transition-all">Check In</button>
                         )}
-                        {hasCheckedIn && (
+                        {hasCheckedIn && !hasCheckedOut && (
                             <button onClick={handleCheckOut} className="bg-red-400 text-3xl p-2 cursor-pointer hover:scale-105 transition-all">Check Out</button>
+                        )}
+                        {hasCheckedIn && hasCheckedOut && (
+                            <section>
+                                <p>Checked in on: {attendance.check_in}</p>
+                                <p>Checked out on: {attendance.check_out}</p>
+                                <p>Work duration: {attendance.work_duration}</p>
+                            </section>
                         )}
                         {actionLoading && (
                             <p className="text-white">Processing...</p>
