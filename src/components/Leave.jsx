@@ -12,6 +12,7 @@ export default function Leave() {
         leave_type: 'Annual Leave',
         details: ''
     });
+    const [employeeList, setEmployeeList] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -26,12 +27,23 @@ export default function Leave() {
                 // 1. Fetch employee using the logged‑in user's email
                 const { data: employeeData, error: employeeError } = await supabase
                     .from("Employee")
-                    .select("id, employee_name, type")
+                    .select("id, employee_name, type, employee_company")
                     .eq("employee_email", user.email)
                     .single();
 
                 if (employeeError) throw employeeError;
                 setEmployee(employeeData);
+
+                // fetch all employees for hr display
+                const { data: employeeListData, error: employeeListError } = await supabase
+                    .from("Employee")
+                    .select("id, employee_name, employee_email, type")
+                    .eq("employee_company", employeeData.employee_company)
+                    .neq("type", 'HR');
+
+                if (employeeListError) throw employeeListError;
+                setEmployeeList(employeeListData);
+
             } catch (error) {
                 console.error("Error fetching data:", error);
                 setEmployee(null);
@@ -117,7 +129,7 @@ export default function Leave() {
                 )}
                 {employee && employee.type == 'HR' && (
                     <div className="w-full">
-                        
+
                     </div>
                 )}
                 {employee == null || !employee && (
