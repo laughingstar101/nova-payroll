@@ -74,7 +74,7 @@ export default function Leave() {
                 employee_id: employee.id,
                 leave_type: leaveData.leave_type,
                 details: leaveData.details,
-                status: "UNAPPROVED"
+                status: "PENDING"
             });
         if (error) {
             console.error("Error adding to table", error);
@@ -184,14 +184,14 @@ export default function Leave() {
                                     <p><span className="font-bold">Type: </span>{leave.leave_type}</p>
                                     <p><span className="font-bold">Details: </span><p className="overflow-y-scroll max-h-12">{leave.details}</p></p>
                                     <p><span className="font-bold">Status: </span>
-                                        {leave.status === 'UNAPPROVED' && (
+                                        {leave.status === 'PENDING' && (
                                             <span>{leave.status}</span>
                                         )}
                                         {leave.status === 'APPROVED' && (
-                                            <span className={`px-1 ${leave.status !== 'UNAPPROVED' ? 'bg-green-300' : 'bg-none'}`}>{leave.status}</span>
+                                            <span className={`px-1 ${leave.status !== 'PENDING' ? 'bg-green-300' : 'bg-none'}`}>{leave.status}</span>
                                         )}
                                         {leave.status === 'REJECTED' && (
-                                            <span className={`px-1 ${leave.status !== 'UNAPPROVED' ? 'bg-red-300' : 'bg-none'}`}>{leave.status}</span>
+                                            <span className={`px-1 ${leave.status !== 'PENDING' ? 'bg-red-300' : 'bg-none'}`}>{leave.status}</span>
                                         )}
                                     </p>
                                     {leave.status === 'UNAPPROVED' && (
