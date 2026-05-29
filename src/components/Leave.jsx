@@ -202,11 +202,23 @@ export default function Leave() {
                                     </span>
                                     <p><span className="font-bold">Type: </span>{leave.leave_type}</p>
                                     <p><span className="font-bold">Details: </span><p>{leave.details}</p></p>
-                                    <p><span className="font-bold">Status: </span>{leave.status}</p>
-                                    <div className="flex gap-2">
-                                        <button onClick={() => handleLeaveApprove(leave.id)} className="bg-green-600 text-white py-1 hover:bg-green-700 hover:cursor-pointer w-full">Approve</button>
-                                        <button onClick={() => handleLeaveReject(leave.id)} className="bg-red-700 text-white py-1 hover:bg-red-800 hover:cursor-pointer w-full">Reject</button>
-                                    </div>
+                                    <p><span className="font-bold">Status: </span>
+                                        {leave.status === 'UNAPPROVED' && (
+                                            <span>{leave.status}</span>
+                                        )}
+                                        {leave.status === 'APPROVED' && (
+                                            <span className={`px-1 ${leave.status !== 'UNAPPROVED' ? 'bg-green-300' : 'bg-none'}`}>{leave.status}</span>
+                                        )}
+                                        {leave.status === 'REJECTED' && (
+                                            <span className={`px-1 ${leave.status !== 'UNAPPROVED' ? 'bg-red-300' : 'bg-none'}`}>{leave.status}</span>
+                                        )}
+                                    </p>
+                                    {leave.status === 'UNAPPROVED' && (
+                                        <div className="flex gap-2">
+                                            <button onClick={() => handleLeaveApprove(leave.id)} className='bg-green-600 text-white py-1 hover:bg-green-700 hover:cursor-pointer w-full'>Approve</button>
+                                            <button onClick={() => handleLeaveReject(leave.id)} className="bg-red-700 text-white py-1 hover:bg-red-800 hover:cursor-pointer w-full">Reject</button>
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                         </div>
