@@ -111,11 +111,15 @@ export default function Attendance() {
         try {
             const now = new Date();
             const checkInTime = new Date(attendance.check_in);
-            const durationHours = (now - checkInTime) / (1000 * 60 * 60);
-            const hours = Math.floor(durationHours);
-            const minutes = Math.round((durationHours % 1) * 60);
-            const intervalLiteral = `${hours} hours ${minutes} minutes`;
+            const durationMs = now - checkInTime;
+            const totalSeconds = Math.floor(durationMs / 1000);
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            const intervalLiteral = `${hours} hours ${minutes} minutes ${seconds} seconds`;
+            const durationHours = durationMs / (1000 * 60 * 60);
             const newStatus = durationHours >= 9 ? 'NORMAL' : 'INSUFFICIENT_HOURS';
+            
             const { error } = await supabase
                 .from("Attendance")
                 .update({
