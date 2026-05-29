@@ -54,9 +54,6 @@ export default function Attendance() {
                     .eq('date', today)
                     .limit(1)
                     .maybeSingle();
-                
-                console.log("Attendance fetch error:", attendanceError);
-                console.log("Attendance data:", attendanceData);
 
                 if (attendanceError) throw attendanceError;
                 setAttendance(attendanceData || null);
@@ -119,7 +116,7 @@ export default function Attendance() {
             const intervalLiteral = `${hours} hours ${minutes} minutes ${seconds} seconds`;
             const durationHours = durationMs / (1000 * 60 * 60);
             const newStatus = durationHours >= 9 ? 'NORMAL' : 'INSUFFICIENT_HOURS';
-            
+
             const { error } = await supabase
                 .from("Attendance")
                 .update({
@@ -155,6 +152,17 @@ export default function Attendance() {
         );
     }
 
+    const formatTime = (isoString) => {
+        if (!isoString) return '-';
+        return new Date(isoString).toLocaleTimeString('en-GB', {
+            timeZone: 'Asia/Kuala_Lumpur',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        });
+    }
+
     return (
         <div className="min-h-screen flex flex-col bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
             <div className='bg-primary-colour w-full grid grid-cols-3 py-4 px-4'>
@@ -181,9 +189,10 @@ export default function Attendance() {
                         )}
                         {hasCheckedIn && hasCheckedOut && (
                             <section>
-                                <p>Checked in on: {attendance.check_in}</p>
-                                <p>Checked out on: {attendance.check_out}</p>
-                                <p>Work duration: {attendance.work_duration}</p>
+                                <p className="text-white text-md">Checked in on: {formatTime(attendance.check_in)}</p>
+                                <p className="text-white text-md">Checked out on: {formatTime(attendance.check_out)}</p>
+                                <p className="text-white text-md">Work duration: {attendance.work_duration}</p>
+                                <p className="text-white text-xl">Come back tomorrow!</p>
                             </section>
                         )}
                         {actionLoading && (
