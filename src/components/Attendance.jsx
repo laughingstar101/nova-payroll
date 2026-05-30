@@ -26,7 +26,8 @@ export default function Attendance() {
     const [hasCheckedOut, setHasCheckedOut] = useState(false);
     const [actionLoading, setActionLoading] = useState(false);
     const [viewRecords, setViewRecords] = useState(false);
-    
+    const [onTime, setOnTime] = useState('');
+
     useEffect(() => {
         const fetchData = async () => {
             const { data: { user } } = await supabase.auth.getUser();
@@ -95,6 +96,14 @@ export default function Attendance() {
 
     const handleCheckOut = async () => {
         setActionLoading(true);
+        const { data, error } = await supabase
+            .from("Company")
+            .select("work_start_time")
+            .eq('id', employee.employee_company)
+            .single();
+        if (error) throw error;
+        setOnTime(data);
+
         try {
             const now = new Date();
             const checkInTime = new Date(attendance.check_in);
@@ -105,14 +114,16 @@ export default function Attendance() {
             const seconds = totalSeconds % 60;
             const intervalLiteral = `${hours} hours ${minutes} minutes ${seconds} seconds`;
             const durationHours = durationMs / (1000 * 60 * 60);
-            const newStatus = durationHours >= 9 ? 'NORMAL' : 'INSUFFICIENT HOURS';
+            const statusHours = durationHours >= 9 ? 'NORMAL' : 'INSUFFICIENT HOURS';
+            const statusOnTime = checkInTime > onTime ? 'LATE' : 'ON TIME';
 
             const { error } = await supabase
                 .from("Attendance")
                 .update({
                     check_out: now.toISOString(),
                     work_duration: intervalLiteral,
-                    status_hours: newStatus
+                    status_hours: statusHours,
+                    status_on_time: statusOnTime
                 })
                 .eq('id', attendance.id);
             if (error) throw error;
@@ -120,7 +131,8 @@ export default function Attendance() {
                 ...prev,
                 check_out: now.toISOString(),
                 work_duration: intervalLiteral,
-                status_hours: newStatus
+                status_hours: statusHours,
+                status_on_time: statusOnTime
             }));
             setHasCheckedOut(true);
             alert("Checked out successfully.");
@@ -165,53 +177,79 @@ export default function Attendance() {
                 <img onClick={() => navigate("/profile")} src={profileImg} className="h-15 hover:cursor-pointer justify-self-end" alt="profile" />
             </div>
             <div className="container bg-primary-colour mx-auto flex flex-col items-center px-12 py-8 rounded-md shadow-xl mt-6">
-                <section className="flex flex-col items-center gap-4 w-full">
-                    <p className="text-white text-3xl text-center font-bold">
-                        Attendance Records for {employee.employee_name}
-                    </p>
-                    <div className="grid grid-cols-[1fr_auto_1fr] gap-4 w-full">
-                        <span className="flex gap-2 items-center text-white justify-self-start"></span>
-                        <p className="text-white text-2xl text-center">{todayDate}</p>
-                        <span className="flex gap-2 items-center text-white justify-self-end"></span>
-                    </div>
-                    {!isWeekday && (
-                        <section className="flex flex-col gap-2">
-                            <p className="text-white text-2xl text-center">No attendance for {todayDate}</p>
-                            <img alt="no work" src="https://media.makeameme.org/created/yay-no-work-cctoqg.jpg" />
-                        </section>
-                    )}
-                    {isWeekday && (
-                        <section className="flex flex-col items-center gap-4">
-                            <p className="text-white text-2xl text-center">Attendance for {todayDate}</p>
-                            <div>
-                                {!hasCheckedIn && !hasCheckedOut && (
-                                    <>
-                                        <button onClick={handleCheckIn} className="bg-green-400 text-3xl p-2 cursor-pointer hover:scale-105 transition-all">
-                                            Check In
-                                        </button>
-                                    </>
-                                )}
-                                {hasCheckedIn && !hasCheckedOut && (
-                                    <>
-                                        <button onClick={handleCheckOut} className="bg-red-400 text-3xl p-2 cursor-pointer hover:scale-105 transition-all">
-                                            Check Out
-                                        </button>
-                                    </>
-                                )}
-                            </div>
-                            {hasCheckedIn && hasCheckedOut && (
-                                <div className="text-white text-center space-y-1">
-                                    <p>Checked in: {formatTime(attendance.check_in)}</p>
-                                    <p>Checked out: {formatTime(attendance.check_out)}</p>
-                                    <p>Work duration: {attendance.work_duration}</p>
-                                    <p>Status: {attendance.status}</p>
+                {employee.type !== 'HR' && (
+                    <>
+                        {!viewRecords && (
+
+                            <section className="flex flex-col items-center gap-4 w-full">
+                                <p className="text-white text-3xl text-center font-bold">
+                                    Attendance Records for {employee.employee_name}
+                                </p>
+                                <div className="grid grid-cols-[1fr_auto_1fr] gap-4 w-full">
+                                    <span className="flex gap-2 items-center text-white justify-self-start"></span>
+                                    <p className="text-white text-2xl text-center">{todayDate}</p>
+                                    <span className="flex gap-2 items-center text-white justify-self-end"></span>
                                 </div>
-                            )}
-                            {actionLoading && <p className="text-white">Processing...</p>}
-                        </section>
-                    )}
-                    <p onClick={() => setViewRecords(!viewRecords)} className="text-white mt-4 hover:cursor-pointer hover:underline">View past attendance records</p>
-                </section>
+                                {!isWeekday && (
+                                    <section className="flex flex-col gap-2">
+                                        <p className="text-white text-2xl text-center">No attendance for {todayDate}</p>
+                                        <img alt="no work" src="https://media.makeameme.org/created/yay-no-work-cctoqg.jpg" />
+                                    </section>
+                                )}
+                                {isWeekday && (
+                                    <section className="flex flex-col items-center gap-4">
+                                        {/* <p className="text-white text-2xl text-center">Attendance for {todayDate}</p> */}
+                                        <div>
+                                            {!hasCheckedIn && !hasCheckedOut && (
+                                                <>
+                                                    <button onClick={handleCheckIn} className="bg-green-400 text-3xl p-2 cursor-pointer hover:scale-105 transition-all">
+                                                        Check In
+                                                    </button>
+                                                </>
+                                            )}
+                                            {hasCheckedIn && !hasCheckedOut && (
+                                                <>
+                                                    <button onClick={handleCheckOut} className="bg-red-400 text-3xl p-2 cursor-pointer hover:scale-105 transition-all">
+                                                        Check Out
+                                                    </button>
+                                                </>
+                                            )}
+                                        </div>
+                                        {hasCheckedIn && hasCheckedOut && (
+                                            <div className="text-white text-center space-y-1">
+                                                <div className="flex gap-8">
+                                                    <div>
+                                                        <p className="font-bold">Checked in: </p>
+                                                        <p>{formatTime(attendance.check_in)}</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-bold">Checked out: </p>
+                                                        <p>{formatTime(attendance.check_out)}</p>
+                                                    </div>
+                                                </div>
+                                                <p className="font-bold">Status:</p>
+                                                <p className="text-left">{attendance.status_hours}</p>
+                                                <p className="text-left">{attendance.status_on_time}</p>
+                                            </div>
+                                        )}
+                                        {actionLoading && <p className="text-white">Processing...</p>}
+                                    </section>
+                                )}
+                                <button onClick={() => setViewRecords(!viewRecords)} className="text-black mt-4 hover:cursor-pointer bg-complementary-colour2 px-4 py-1 rounded-sm hover:scale-105 transition-all">View past attendance records</button>
+                            </section>
+                        )}
+                        {viewRecords && (
+                            <section>
+                                <p onClick={() => setViewRecords(!viewRecords)} className="text-white hover:underline hover:cursor-pointer">back</p>
+                            </section>
+                        )}
+                    </>
+                )}
+                {employee.type === 'HR' && (
+                    <>
+                    <p className='text-5xl text-white font-hero! text-center mt-8'>Profile</p>
+                    </>
+                )}
             </div>
         </div>
     );
