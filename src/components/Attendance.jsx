@@ -119,6 +119,7 @@ export default function Attendance() {
     }
 
     const handleCheckOut = async () => {
+        if (!attendance) return;
         setActionLoading(true);
 
         try {
