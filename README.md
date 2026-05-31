@@ -5,14 +5,14 @@ The application allows companies to register, manage employees, track attendance
 
 ## Key Highlights
 
-- **Company registration** – Sign up with name, email, password.  
-- **Role‑based dashboards** – HR manages employees & leave; employees track attendance & leave.  
-- **Employee management (HR)** – Bulk add employees, assign roles, send password‑reset emails.  
-- **Attendance tracking** – Check in/out (button or QR code), automatic work duration & late detection.  
-- **Leave management** – Submit requests, HR approves/rejects, status updates instantly.  
-- **Profile editing** – Update name, reset password.  
-- **Authentication** – Supabase Auth (email/password).  
-- **Responsive UI** – Tailwind CSS, works on desktop & mobile.
+- **Company registration** – Sign up with name, email, and password.  
+- **Role‑based dashboards** – HR manages employees, leave, and attendance; employees track their own attendance and leave.  
+- **Employee management (HR)** – Bulk add employees, assign roles (`Part‑time`, `Full‑time`, `HR`), send password‑reset emails automatically.  
+- **Attendance tracking** – Check in/out via button **or QR code**; automatic calculation of work duration (HH:MM:SS); late check‑ins detected based on company’s work start time.  
+- **Leave management** – Employees submit leave requests (type + details); HR approves/rejects with instant UI updates.  
+- **Profile editing** – Users can update their display name and reset their password.  
+- **Authentication** – Fully managed by Supabase Auth (email/password).  
+- **Responsive UI** – Built with Tailwind CSS, works on desktop and mobile devices.
 
 ## Tech Stack
 
