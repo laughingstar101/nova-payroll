@@ -27,6 +27,7 @@ export default function Attendance() {
     const [actionLoading, setActionLoading] = useState(false);
     const [viewRecords, setViewRecords] = useState(false);
     const [onTime, setOnTime] = useState('');
+    const [attendanceList, setAttendanceList] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -57,6 +58,17 @@ export default function Attendance() {
                 setAttendance(attendanceData || null);
                 if (attendanceData?.check_in) setHasCheckedIn(true);
                 if (attendanceData?.check_out) setHasCheckedOut(true);
+
+                if (employeeData.type === 'HR') {
+                    const { data: allAttendanceData, error: allAttendanceError } = await supabase
+                        .from("Attendance")
+                        .select("*, employee:employee_id (employee_company)")
+                        .eq('employee.employee_company', employeeData.employee_company);
+                    if (allAttendanceError) throw allAttendanceError;
+                    setAttendanceList(allAttendanceData || null);
+                    console.log(attendanceList);
+                }
+
             } catch (error) {
                 console.log("Error fetching data:", error);
                 alert("Error fetching data from database.");
