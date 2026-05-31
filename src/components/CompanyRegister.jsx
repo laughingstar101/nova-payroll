@@ -169,7 +169,7 @@ export default function CompanyRegister() {
                                 onChange={handleInputChange}
                             />
                             <input 
-                                placeholder="Company Email"
+                                placeholder="Company HR Email"
                                 name="companyEmail"
                                 type="email" 
                                 className="bg-amber-50 w-full h-12! pl-2.5!"
