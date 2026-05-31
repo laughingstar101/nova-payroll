@@ -38,6 +38,7 @@ export default function Attendance() {
         status_hours: '',
         status_on_time: ''
     });
+    const [pastAttendanceList, setPastAttendanceList] = useState([]);
 
     const startTimer = (checkInTime) => {
         if (timerRef.current) clearInterval(timerRef.current);
@@ -119,19 +120,37 @@ export default function Attendance() {
     useEffect(() => {
         const fetchHrData = async () => {
             if (!employee || employee.type !== 'HR') return;
-            const { data: allAttendanceData, error: allAttendanceError } = await supabase
+            const { data, error } = await supabase
                 .from("Attendance")
                 .select("*, employee:employee_id (employee_name, type, employee_company)")
                 .eq('employee.employee_company', employee.employee_company);
-            if (allAttendanceError) {
-                console.log(allAttendanceError);
+            if (error) {
+                console.log(error);
             } else {
-                setAttendanceList(allAttendanceData || null);
-                console.log(allAttendanceData);
+                setAttendanceList(data || null);
+                console.log(data);
             }
         }
         fetchHrData();
     }, [employee])
+
+    useEffect(() => {
+        const fetchPastRecords = async () => {
+            if (!viewRecords || !employee) return;
+            const { data, error } = await supabase
+                .from("Attendance")
+                .select("*")
+                .eq("employee_id", employee.id);
+            if (error) {
+                console.log(error);
+                alert("Error fetching attendance records. Please try again.");
+                setViewRecords(false);
+            } else {
+                setPastAttendanceList(data);
+            }
+        }
+        fetchPastRecords();
+    }, [viewRecords, employee])
 
     const handleCheckIn = async () => {
         setActionLoading(true);
@@ -334,14 +353,10 @@ export default function Attendance() {
                 {employee.type !== 'HR' && (
                     <>
                         {!viewRecords && (
-
                             <section className="flex flex-col items-center gap-4 w-full">
-                                <p className="text-white text-3xl text-center font-bold">
-                                    Attendance Records for {employee.employee_name}
-                                </p>
                                 <div className="grid grid-cols-[1fr_auto_1fr] gap-4 w-full">
                                     <span className="flex gap-2 items-center text-white justify-self-start"></span>
-                                    <p className="text-white text-2xl text-center">{todayDate}</p>
+                                    <p className="text-white font-bold text-3xl text-center">{todayDate}</p>
                                     <span className="flex gap-2 items-center text-white justify-self-end"></span>
                                 </div>
                                 {!isWeekday && (
@@ -398,8 +413,33 @@ export default function Attendance() {
                             </section>
                         )}
                         {viewRecords && (
-                            <section>
-                                <p onClick={() => setViewRecords(!viewRecords)} className="text-white hover:underline hover:cursor-pointer">back</p>
+                            <section className="flex flex-col items-center gap-8 w-full">
+                                <p className="text-white font-hero! text-5xl text-center">Past Attendance Records</p>
+                                <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4">
+                                    {pastAttendanceList.map(att => (
+                                        <div key={att.id} className="bg-complementary-colour2 px-4 py-2">
+                                            <p className="text-center font-bold text-lg">{employee.employee_name || 'Unknown'}</p>
+                                            <p className="text-center font-bold">Date: {formatDate(att.date)}</p>
+                                            <div className="grid grid-cols-2">
+                                                <div className="flex flex-col">
+                                                    <p className="text-center">Check In Time:</p>
+                                                    <p className="text-center font-bold">{formatTime(att.check_in)}</p>
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <p className="text-center">Check Out Time:</p>
+                                                    <p className="text-center font-bold">{formatTime(att.check_out)}</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <p className="text-center">Work duration:</p>
+                                                <p className="text-center font-bold">{att.work_duration}</p>
+                                            </div>
+                                            <p>Status Hours: <span className="font-bold">{att.status_hours}</span></p>
+                                            <p>Status On Time: <span className="font-bold">{att.status_on_time}</span></p>
+                                        </div>
+                                    ))}
+                                </div>
+                                <p onClick={() => setViewRecords(!viewRecords)} className="text-black mt-4 hover:cursor-pointer bg-complementary-colour2 px-4 py-1 rounded-sm hover:scale-105 transition-all">Back to attendance</p>
                             </section>
                         )}
                     </>
@@ -498,19 +538,19 @@ export default function Attendance() {
                                             <div className="grid grid-cols-2">
                                                 <div className="flex flex-col">
                                                     <p className="text-center">Check In Time:</p>
-                                                    <p className="text-center">{formatTime(att.check_in)}</p>
+                                                    <p className="text-center font-bold">{formatTime(att.check_in)}</p>
                                                 </div>
                                                 <div className="flex flex-col">
                                                     <p className="text-center">Check Out Time:</p>
-                                                    <p className="text-center">{formatTime(att.check_out)}</p>
+                                                    <p className="text-center font-bold">{formatTime(att.check_out)}</p>
                                                 </div>
                                             </div>
                                             <div className="flex flex-col">
                                                 <p className="text-center">Work duration:</p>
-                                                <p className="text-center">{att.work_duration}</p>
+                                                <p className="text-center font-bold">{att.work_duration}</p>
                                             </div>
-                                            <p>Status Hours: {att.status_hours}</p>
-                                            <p>Status On Time: {att.status_on_time}</p>
+                                            <p>Status Hours: <span className="font-bold">{att.status_hours}</span></p>
+                                            <p>Status On Time: <span className="font-bold">{att.status_on_time}</span></p>
                                             <div className="grid grid-cols-2 mt-4">
                                                 <button
                                                     onClick={() => startEdit(att)}
