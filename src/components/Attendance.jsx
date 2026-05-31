@@ -247,7 +247,6 @@ export default function Attendance() {
                 )}
                 {employee.type === 'HR' && (
                     <>
-                    <p className='text-5xl text-white font-hero! text-center mt-8'>Profile</p>
                     </>
                 )}
             </div>
