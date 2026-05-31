@@ -166,7 +166,7 @@ export default function Attendance() {
     return (
         <div className="min-h-screen flex flex-col bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
             <div className='bg-primary-colour w-full grid grid-cols-3 py-4 px-4'>
-                <a onClick={() => navigate("/dashboard")}
+                <a onClick={() => navigate(-1)}
                     className="flex items-center gap-2 text-white text-xl cursor-pointer justify-self-start hover:underline pl-4 mt-2">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
                         <path d="m368-417 202 202-90 89-354-354 354-354 90 89-202 202h466v126H368Z" />

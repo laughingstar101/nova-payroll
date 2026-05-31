@@ -138,7 +138,15 @@ export default function Profile() {
                                 <QRCodeSVG className='border-8 border-white' value={employee.qr_token} size={200} />
                             </div>
                         )}
-                        <p className='text-white hover:underline hover:cursor-pointer' onClick={() => navigate("/")}>Back to main menu</p>
+                        <p 
+                            className='hover:scale-110 hover:cursor-pointer transition-all bg-complementary-colour2 px-2 py-1' 
+                                onClick={async () => { 
+                                    if (confirm("Are you sure you want to log out?")) {
+                                        await supabase.auth.signOut(); 
+                                        navigate("/") 
+                                    } else return
+                                }}
+                        >Log out</p>
                     </div>
                 </div>
             </div>
