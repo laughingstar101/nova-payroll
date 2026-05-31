@@ -26,7 +26,6 @@ export default function Attendance() {
     const [hasCheckedOut, setHasCheckedOut] = useState(false);
     const [actionLoading, setActionLoading] = useState(false);
     const [viewRecords, setViewRecords] = useState(false);
-    const [onTime, setOnTime] = useState('');
     const [attendanceList, setAttendanceList] = useState([]);
 
     useEffect(() => {
@@ -79,6 +78,23 @@ export default function Attendance() {
         fetchData();
     }, [navigate]);
 
+    useEffect(() => {
+        const fetchHrData = async () => {
+            if (!employee || employee.type !== 'HR') return;
+            const { data: allAttendanceData, error: allAttendanceError } = await supabase
+                .from("Attendance")
+                .select("*, employee:employee_id (employee_company)")
+                .eq('employee.employee_company', employee.employee_company);
+            if (allAttendanceError) {
+                console.log(allAttendanceError);
+            } else {
+                setAttendanceList(allAttendanceData || null);
+                console.log(allAttendanceData);
+            }
+        }
+        fetchHrData();
+    }, [employee])
+
     const handleCheckIn = async () => {
         setActionLoading(true);
         try {
@@ -114,7 +130,6 @@ export default function Attendance() {
             .eq('id', employee.employee_company)
             .single();
         if (error) throw error;
-        setOnTime(data);
 
         try {
             const now = new Date();
@@ -127,7 +142,9 @@ export default function Attendance() {
             const intervalLiteral = `${hours} hours ${minutes} minutes ${seconds} seconds`;
             const durationHours = durationMs / (1000 * 60 * 60);
             const statusHours = durationHours >= 9 ? 'NORMAL' : 'INSUFFICIENT HOURS';
-            const statusOnTime = checkInTime > onTime ? 'LATE' : 'ON TIME';
+            const workStartTime = data.work_start_time;
+            const checkInTimeStr = checkInTime.toLocaleTimeString('en-GB', { hour12: false });
+            const statusOnTime = checkInTimeStr > workStartTime ? 'LATE' : 'ON TIME';
 
             const { error } = await supabase
                 .from("Attendance")
