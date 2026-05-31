@@ -27,7 +27,7 @@ export default function Dashboard() {
                 // 1. Fetch employee using the logged‑in user's email
                 const { data: employeeData, error: employeeError } = await supabase
                     .from("Employee")
-                    .select("employee_name, employee_email, type, employee_company")
+                    .select("employee_name, employee_email, type, employee_company, profile_picture_url")
                     .eq("employee_email", user.email)
                     .single();
 
@@ -152,7 +152,11 @@ export default function Dashboard() {
             <div className='bg-primary-colour w-full grid grid-cols-3 py-4 px-4'>
                 <div></div>
                 <img src={logoImg} className="h-15 justify-self-center" height='30'></img>
-                <img onClick={() => navigate("/profile")} src={profileImg} className="h-15 hover:cursor-pointer justify-self-end"></img>
+                {employee?.profile_picture_url ? (
+                    <img onClick={() => navigate("/profile")} className='h-15 hover:cursor-pointer justify-self-end rounded-full' src={employee.profile_picture_url} alt="Profile" />
+                ) : (
+                    <img onClick={() => navigate("/profile")} className='h-15 hover:cursor-pointer justify-self-end rounded-full' src={profileImg} alt="Default profile" />
+                )}
             </div>
             {employee && employee.type === 'HR' && (
                 <section className="flex justify-center sm:gap-4 sm:flex-row flex-col items-center">

@@ -70,7 +70,7 @@ export default function Attendance() {
             try {
                 const { data: employeeData, error: employeeError } = await supabase
                     .from("Employee")
-                    .select("id, employee_name, type, employee_company")
+                    .select("id, employee_name, type, employee_company, profile_picture_url")
                     .eq("employee_email", user.email)
                     .single();
                 if (employeeError) throw employeeError;
@@ -344,7 +344,12 @@ export default function Attendance() {
                     back
                 </a>
                 <img src={logoImg} className="h-15 justify-self-center md:visible invisible" alt="logo" />
-                <img onClick={() => navigate("/profile")} src={profileImg} className="h-15 hover:cursor-pointer justify-self-end" alt="profile" />
+                {/* <img onClick={() => navigate("/profile")} src={profileImg} className="h-15 hover:cursor-pointer justify-self-end" alt="profile" /> */}
+                {employee?.profile_picture_url ? (
+                    <img onClick={() => navigate("/profile")} className='h-15 hover:cursor-pointer justify-self-end rounded-full' src={employee.profile_picture_url} alt="Profile" />
+                ) : (
+                    <img onClick={() => navigate("/profile")} className='h-15 hover:cursor-pointer justify-self-end rounded-full' src={profileImg} alt="Default profile" />
+                )}
             </div>
             {employee.type === 'HR' && (
                 <p className="text-white font-hero! text-5xl text-center mt-8">All Attendance Records</p>
