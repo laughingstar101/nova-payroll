@@ -1,5 +1,5 @@
 import TopBar from "./TopBar.jsx";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { supabase } from '../utils/supabase/supabase.js'
 import { useNavigate } from "react-router-dom";
 
@@ -23,14 +23,6 @@ export default function CompanyRegister() {
         email: '',
         newPassword: ''
     });
-
-    useEffect(() => {
-        const signOut = async () => {
-            const { error } = await supabase.auth.signOut();
-            if (error) throw error;
-        }
-        signOut();
-    }, [])
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -137,6 +129,7 @@ export default function CompanyRegister() {
             setIsSubmitting(false);
         } else {
             console.log(data);
+            console.log("Navigating to dashboard...");
             navigate("/dashboard");
         }
     } 
