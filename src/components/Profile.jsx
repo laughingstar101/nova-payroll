@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import profileImg from '../assets/profile-empty.png'
 import logoImg from '../assets/logo.png'
 import { supabase } from '../utils/supabase/supabase'
@@ -11,6 +11,8 @@ export default function Profile() {
     const [loading, setLoading] = useState(true);
     const [updateName, setUpdateName] = useState(false);
     const [newName, setNewName] = useState('');
+    const [uploading, setUploading] = useState(false);
+    const fileInputRef = useRef(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -23,7 +25,7 @@ export default function Profile() {
             try {
                 const { data, error } = await supabase
                     .from('Employee')
-                    .select('employee_name, employee_email, qr_token')
+                    .select('employee_name, employee_email, qr_token, profile_picture_url')
                     .eq('employee_email', user.email)
                     .single();
 
@@ -90,6 +92,62 @@ export default function Profile() {
         )
     }
 
+    const handleUploadClick = () => {
+        fileInputRef.current.click();
+    }
+
+    const handleFileChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+        if (!allowedTypes.includes(file.type)) {
+            alert("Only JPG, JPEG, or PNG images are allowed.");
+            return;
+        }
+
+        const maxSize = 32 * 1024 * 1024;
+        if (file.size > maxSize) {
+            alert("File size must be less than 32 MB.");
+            return;
+        }
+
+        setUploading(true);
+
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) throw new Error('User not authenticated.');
+
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${user.id}_${Date.now()}.${fileExt}`;
+            const filePath = `profile_pictures/${fileName}`;
+
+            const { error: uploadError } = await supabase.storage
+                .from('images')
+                .upload(filePath, file)
+            if (uploadError) throw uploadError;
+
+            const { data: { publicUrl } } = supabase.storage
+                .from('images')
+                .getPublicUrl(filePath)
+            
+            const { error: updateError } = await supabase
+                .from('Employee')
+                .update({ profile_picture_url: publicUrl })
+                .eq('employee_email', user.email);
+            if (updateError) throw updateError;
+
+            setEmployee(prev => ({ ...prev, profile_picture_url: publicUrl }));
+            alert("Profile picture updated successfully");
+        } catch (err) {
+            console.error(err);
+            alert("Failed to upload image. Please try again.");
+        } finally {
+            setUploading(false);
+            if (fileInputRef.current) fileInputRef.current.value = '';
+        }
+    }
+
     return (
         <div className="min-h-screen w-full flex flex-col bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
             <div className='bg-primary-colour w-full grid grid-cols-3 py-4 px-4'>
@@ -108,8 +166,22 @@ export default function Profile() {
                 <div className="container m-auto flex flex-col gap-4 items-center py-8 rounded-xl bg-primary-colour shadow-xl">
                     <div className='flex flex-col items-center gap-4'>
                         <div className='flex items-center gap-4'>
-                            <img className='w-40' src={profileImg}></img>
-                            <p className='text-white w-16 hover:cursor-pointer hover:underline'><span><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M440-320v-326L336-542l-56-58 200-200 200 200-56 58-104-104v326h-80ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg></span>upload file</p>
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                onChange={handleFileChange}
+                                accept="image/jpeg,image/jpg,image/png"
+                                style={{ display: 'none' }}
+                            />
+                            {employee?.profile_picture_url ? (
+                                <img className='w-40 h-40 object-cover rounded-full' src={employee.profile_picture_url} alt="Profile" />
+                            ) : (
+                                <img className='w-40' src={profileImg} alt="Default profile" />
+                            )}
+                            <p onClick={uploading ? undefined : handleUploadClick} className={`text-white w-16 hover:cursor-pointer hover:underline flex items-center gap-1 ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                                <span><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M440-320v-326L336-542l-56-58 200-200 200 200-56 58-104-104v326h-80ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg></span>
+                                {uploading ? "Uploading..." : "upload file"}
+                            </p>
                         </div>
                         <form onSubmit={handleResetName} className='w-full' id='profile-form'>
                             <p className='text-xl text-white text-left w-full'>Name: {employee.employee_name}</p>
