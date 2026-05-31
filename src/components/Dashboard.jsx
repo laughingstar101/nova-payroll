@@ -150,20 +150,14 @@ export default function Dashboard() {
     return (
         <div className="min-h-screen flex flex-col bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
             <div className='bg-primary-colour w-full grid grid-cols-3 py-4 px-4'>
-                <a onClick={async () => { await supabase.auth.signOut(); navigate("/company-register"); }}
-                    className="flex items-center gap-2 text-white text-xl cursor-pointer text-center justify-self-start hover:underline pl-4 mt-2"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
-                        <path d="m368-417 202 202-90 89-354-354 354-354 90 89-202 202h466v126H368Z" />
-                    </svg>
-                    log out
-                </a>
+                <div></div>
                 <img src={logoImg} className="h-15 justify-self-center" height='30'></img>
                 <img onClick={() => navigate("/profile")} src={profileImg} className="h-15 hover:cursor-pointer justify-self-end"></img>
             </div>
             {employee && employee.type === 'HR' && (
-                <section className="flex justify-center">
-                    <button onClick={() => navigate('/leave')} className="mt-8 bg-complementary-colour text-xl py-2 px-4 cursor-pointer hover:scale-105 transition-all">Approve Leave Applications</button>    
+                <section className="flex justify-center sm:gap-4 sm:flex-row flex-col items-center">
+                    <button onClick={() => navigate('/leave')} className="mt-8 bg-complementary-colour text-xl py-2 px-4 cursor-pointer hover:scale-105 transition-all w-fit">Approve Leave Applications</button>    
+                    <button onClick={() => navigate('/attendance')} className="mt-8 bg-complementary-colour2 text-xl py-2 px-4 cursor-pointer hover:scale-105 transition-all w-fit">Check Attendance</button>    
                 </section>
             )}
             <div className="container bg-primary-colour mx-auto flex flex-col items-center px-12 py-8 mt-8 rounded-md shadow-xl">

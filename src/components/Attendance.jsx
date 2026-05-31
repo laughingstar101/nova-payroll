@@ -1,13 +1,12 @@
 import { useNavigate } from "react-router-dom";
-import profileImg from '../assets/profile-empty.png'
-import logoImg from '../assets/logo.png'
-import { useEffect, useState } from "react";
+import profileImg from '../assets/profile-empty.png';
+import logoImg from '../assets/logo.png';
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "../utils/supabase/supabase";
 
 export default function Attendance() {
     const navigate = useNavigate();
-
-    const [loading, setLoading] = useState(true); // CHANGE BACK TO TRUE
+    const [loading, setLoading] = useState(true);
     const [employee, setEmployee] = useState(null);
     const [attendance, setAttendance] = useState(null);
     const [todayDate] = useState(() => {
@@ -22,10 +21,42 @@ export default function Attendance() {
     const [isWeekday] = useState(() => {
         const day = new Date().getDay();
         return day >= 1 && day <= 5;
-    })
+    });
     const [hasCheckedIn, setHasCheckedIn] = useState(false);
     const [hasCheckedOut, setHasCheckedOut] = useState(false);
     const [actionLoading, setActionLoading] = useState(false);
+    const [viewRecords, setViewRecords] = useState(false);
+    const [attendanceList, setAttendanceList] = useState([]);
+    const [companySettings, setCompanySettings] = useState({ work_start_time: '', required_hours: '' });
+    const [elapsedSeconds, setElapsedSeconds] = useState(0);
+    const timerRef = useRef(null);
+    const [editingId, setEditingId] = useState(null);
+    const [editFormData, setEditFormData] = useState({
+        check_in: '',
+        check_out: '',
+        work_duration: '',
+        status_hours: '',
+        status_on_time: ''
+    });
+
+    const startTimer = (checkInTime) => {
+        if (timerRef.current) clearInterval(timerRef.current);
+        const now = new Date();
+        const diffSeconds = Math.floor((now - new Date(checkInTime)) / 1000)
+        setElapsedSeconds(diffSeconds > 0 ? diffSeconds : 0);
+        timerRef.current = setInterval(() => {
+            const now = new Date();
+            const diffSeconds = Math.floor((now - new Date(checkInTime)) / 1000)
+            setElapsedSeconds(diffSeconds > 0 ? diffSeconds : 0);
+        }, 1000); // 1s
+    }
+
+    const stopTimer = () => {
+        if (timerRef.current) {
+            clearInterval(timerRef.current);
+            timerRef.current = null;
+        }
+    }
 
     useEffect(() => {
         const fetchData = async () => {
@@ -35,17 +66,24 @@ export default function Attendance() {
                 navigate("/");
                 return;
             }
-
             try {
-                // 1. Fetch employee using the logged‑in user's email
                 const { data: employeeData, error: employeeError } = await supabase
                     .from("Employee")
                     .select("id, employee_name, type, employee_company")
                     .eq("employee_email", user.email)
                     .single();
-
                 if (employeeError) throw employeeError;
                 setEmployee(employeeData);
+
+                if (employeeData.employee_company) {
+                    const { data: compData, error: compError } = await supabase
+                        .from("Company")
+                        .select("work_start_time, required_hours")
+                        .eq("id", employeeData.employee_company)
+                        .single();
+                    if (compError) throw compError;
+                    else setCompanySettings(compData);
+                }
 
                 const today = new Date().toISOString().split('T')[0];
                 const { data: attendanceData, error: attendanceError } = await supabase
@@ -55,72 +93,82 @@ export default function Attendance() {
                     .eq('date', today)
                     .limit(1)
                     .maybeSingle();
-
                 if (attendanceError) throw attendanceError;
                 setAttendance(attendanceData || null);
-
                 if (attendanceData?.check_in) setHasCheckedIn(true);
                 if (attendanceData?.check_out) setHasCheckedOut(true);
 
+                if (attendanceData?.check_in && !attendanceData?.check_out) {
+                    startTimer(attendanceData.check_in);
+                }
+
             } catch (error) {
-                console.error("Error fetching data:", error);
-                setEmployee(null);
+                console.log("Error fetching data:", error);
                 alert("Error fetching data from database.");
             } finally {
                 setLoading(false);
             }
         };
-
         fetchData();
     }, [navigate]);
 
+    useEffect(() => {
+        return () => stopTimer();
+    }, [])
+
+    useEffect(() => {
+        const fetchHrData = async () => {
+            if (!employee || employee.type !== 'HR') return;
+            const { data: allAttendanceData, error: allAttendanceError } = await supabase
+                .from("Attendance")
+                .select("*, employee:employee_id (employee_name, type, employee_company)")
+                .eq('employee.employee_company', employee.employee_company);
+            if (allAttendanceError) {
+                console.log(allAttendanceError);
+            } else {
+                setAttendanceList(allAttendanceData || null);
+                console.log(allAttendanceData);
+            }
+        }
+        fetchHrData();
+    }, [employee])
+
     const handleCheckIn = async () => {
         setActionLoading(true);
-
         try {
-            const { data:lateData, error:lateError } = await supabase 
-                .from("Company")
-                .select("work_start_time")
-                .eq('id', employee.employee_company)
-                .single();
-
-            if (lateError) throw lateError;
-
-            const workStartTime = lateData.work_start_time;
             const now = new Date();
-            const checkInTimeStr = now.toLocaleTimeString('en-GB', { hour12: false });
-            
-            const isLate = checkInTimeStr > workStartTime;
-            const onTimeStatus = isLate ? "LATE" : "ON TIME";
-
             const today = now.toISOString().split('T')[0];
-            const { data , error } = await supabase
+            const { data, error } = await supabase
                 .from("Attendance")
                 .insert({
                     employee_id: employee.id,
                     check_in: now.toISOString(),
                     date: today,
-                    status: 'PENDING',
-                    status_on_time: onTimeStatus
+                    status_hours: 'PENDING'
                 })
                 .select()
                 .single();
-            
             if (error) throw error;
             setAttendance(data);
             setHasCheckedIn(true);
-            alert(`Checked in successfully. You are ${isLate ? 'LATE' : 'ON TIME'}`);
+            startTimer(data.check_in);
+            alert("Checked in successfully.");
         } catch (error) {
-            console.error(error);
+            console.log("Full error object:", error);
             alert("Failed to check in. Please try again later.");
         } finally {
             setActionLoading(false);
         }
-    }
+    };
 
     const handleCheckOut = async () => {
-        if (!attendance) return;
         setActionLoading(true);
+        const { data, error } = await supabase
+            .from("Company")
+            .select("work_start_time")
+            .eq('id', employee.employee_company)
+            .single();
+        if (error) throw error;
 
         try {
             const now = new Date();
@@ -133,41 +181,37 @@ export default function Attendance() {
             const intervalLiteral = `${hours} hours ${minutes} minutes ${seconds} seconds`;
             const durationHours = durationMs / (1000 * 60 * 60);
             const statusHours = durationHours >= 9 ? 'NORMAL' : 'INSUFFICIENT HOURS';
+            const workStartTime = data.work_start_time;
+            const checkInTimeStr = checkInTime.toLocaleTimeString('en-GB', { hour12: false });
+            const statusOnTime = checkInTimeStr > workStartTime ? 'LATE' : 'ON TIME';
 
             const { error } = await supabase
                 .from("Attendance")
                 .update({
                     check_out: now.toISOString(),
                     work_duration: intervalLiteral,
-                    status_hours: statusHours
+                    status_hours: statusHours,
+                    status_on_time: statusOnTime
                 })
                 .eq('id', attendance.id);
-                
             if (error) throw error;
-            
             setAttendance(prev => ({
                 ...prev,
                 check_out: now.toISOString(),
                 work_duration: intervalLiteral,
-                status_hours: statusHours
+                status_hours: statusHours,
+                status_on_time: statusOnTime
             }));
+            stopTimer();
             setHasCheckedOut(true);
             alert("Checked out successfully.");
         } catch (error) {
-            console.error(error);
+            console.log(error);
             alert("Failed to check out. Please try again.");
         } finally {
             setActionLoading(false);
         }
-    }
-
-    if (loading) {
-        return (
-            <div className="min-h-screen w-full flex justify-center items-center bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
-                <div className="loader"></div>
-            </div>
-        );
-    }
+    };
 
     const formatTime = (isoString) => {
         if (!isoString) return '-';
@@ -178,60 +222,318 @@ export default function Attendance() {
             second: '2-digit',
             hour12: false
         });
+    };
+
+    const formatDate = (dateStr) => {
+        if (!dateStr) return;
+        const [year, month, day] = dateStr.split('-');
+        return `${day}/${month}/${year}`;
     }
+
+    const formatElapsedTime = (seconds) => {
+        const hrs = Math.floor(seconds / 3600);
+        const mins = Math.floor((seconds % 3600) / 60);
+        const secs = seconds % 60;
+        return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    };
+
+    if (loading) {
+        return (
+            <div className="min-h-screen w-full flex justify-center items-center bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
+                <div className="loader"></div>
+            </div>
+        );
+    }
+
+    const handleDelete = async (id) => {
+        if (!confirm("Are you sure you want to delete this attendance record?")) return; 
+        const { error } = await supabase
+            .from("Attendance")
+            .delete()
+            .eq('id', id)
+        if (error) {
+            console.log(error);
+            alert("Failed to delete record. Please try again later.");
+        } else {
+            alert("Attendance deleted.")
+            setAttendanceList(prevList => prevList.filter(record => record.id !== id));
+        }
+    }
+
+    const startEdit = (att) => {
+        setEditingId(att.id);
+        setEditFormData({
+            check_in: att.check_in,
+            check_out: att.check_out,
+            work_duration: att.work_duration,
+            status_hours: att.status_hours,
+            status_on_time: att.status_on_time
+        });
+    };
+
+    const cancelEdit = () => {
+        setEditingId(null);
+        setEditFormData({
+            check_in: '',
+            check_out: '',
+            work_duration: '',
+            status_hours: '',
+            status_on_time: ''
+        });
+    };
+
+    const handleEditChange = (e) => {
+        const { name, value } = e.target;
+        setEditFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleUpdate = async (id) => {
+        if (!confirm("Are you sure you want to update this attendance record?")) return;
+        const { error } = await supabase
+            .from("Attendance")
+            .update({
+                check_in: editFormData.check_in,
+                check_out: editFormData.check_out,
+                work_duration: editFormData.work_duration,
+                status_hours: editFormData.status_hours,
+                status_on_time: editFormData.status_on_time
+            })
+            .eq('id', id);
+        if (error) {
+            console.error(error);
+            alert("Failed to update record. Please try again.");
+        } else {
+            alert("Attendance record updated.");
+            // Update local state
+            setAttendanceList(prevList =>
+                prevList.map(record =>
+                    record.id === id ? { ...record, ...editFormData } : record
+                )
+            );
+            cancelEdit();
+        }
+    };
 
     return (
         <div className="min-h-screen flex flex-col bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
             <div className='bg-primary-colour w-full grid grid-cols-3 py-4 px-4'>
-                <a onClick={async () => { navigate("/dashboard"); }}
-                    className="flex items-center gap-2 text-white text-xl cursor-pointer text-center justify-self-start hover:underline pl-4 mt-2"
-                >
+                <a onClick={() => navigate("/dashboard")}
+                    className="flex items-center gap-2 text-white text-xl cursor-pointer justify-self-start hover:underline pl-4 mt-2">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
                         <path d="m368-417 202 202-90 89-354-354 354-354 90 89-202 202h466v126H368Z" />
                     </svg>
                     back
                 </a>
-                <img src={logoImg} className="h-15 justify-self-center md:visible invisible" height='30'></img>
-                <img onClick={() => navigate("/profile")} src={profileImg} className="h-15 hover:cursor-pointer justify-self-end"></img>
+                <img src={logoImg} className="h-15 justify-self-center md:visible invisible" alt="logo" />
+                <img onClick={() => navigate("/profile")} src={profileImg} className="h-15 hover:cursor-pointer justify-self-end" alt="profile" />
             </div>
-            <div className="container bg-primary-colour mx-auto flex flex-col items-center px-12 py-8 rounded-md shadow-xl mt-6">
-                <section className="flex flex-col items-center gap-4 w-full">
-                    <p className="text-white text-3xl text-center font-bold">Attendance Records for {employee.employee_name}</p>
-                    <div className="grid grid-cols-[1fr_auto_1fr] gap-4 w-full">
-                        <span className= "flex gap-2 items-center text-white justify-self-start hover:cursor-pointer hover:underline"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/></svg>Last</span>
-                        <p className="text-white text-2xl text-center">{todayDate}</p>
-                        <span className="flex gap-2 items-center text-white justify-self-end hover:cursor-pointer hover:underline">Next<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"/></svg></span>
+            {employee.type === 'HR' && (
+                <p className="text-white font-hero! text-5xl text-center mt-8">All Attendance Records</p>
+            )}
+            <div className="container bg-primary-colour mx-auto flex flex-col items-center px-12 py-8 rounded-md shadow-xl mt-4">
+                {employee.type !== 'HR' && (
+                    <>
+                        {!viewRecords && (
+
+                            <section className="flex flex-col items-center gap-4 w-full">
+                                <p className="text-white text-3xl text-center font-bold">
+                                    Attendance Records for {employee.employee_name}
+                                </p>
+                                <div className="grid grid-cols-[1fr_auto_1fr] gap-4 w-full">
+                                    <span className="flex gap-2 items-center text-white justify-self-start"></span>
+                                    <p className="text-white text-2xl text-center">{todayDate}</p>
+                                    <span className="flex gap-2 items-center text-white justify-self-end"></span>
+                                </div>
+                                {!isWeekday && (
+                                    <section className="flex flex-col gap-2">
+                                        <p className="text-white text-2xl text-center">No attendance for {todayDate}</p>
+                                        <img alt="no work" src="https://media.makeameme.org/created/yay-no-work-cctoqg.jpg" />
+                                    </section>
+                                )}
+                                {isWeekday && (
+                                    <section className="flex flex-col items-center gap-4">
+                                        {/* <p className="text-white text-2xl text-center">Attendance for {todayDate}</p> */}
+                                        <div>
+                                            {!hasCheckedIn && !hasCheckedOut && (
+                                                <div className="flex flex-col">
+                                                    <p className="text-white text-lg">Check in by {companySettings.work_start_time}</p>
+                                                    <p className="text-white text-lg">Required hours: {companySettings.required_hours} hours</p>
+                                                    <button onClick={handleCheckIn} className="bg-green-400 text-3xl p-2 cursor-pointer hover:scale-105 transition-all mt-8">
+                                                        Check In
+                                                    </button>
+                                                </div>
+                                            )}
+                                            {hasCheckedIn && !hasCheckedOut && (
+                                                <div className="flex flex-col">
+                                                    <p className="text-white text-lg">Required hours: {companySettings.required_hours} hours</p>
+                                                    <p className="text-white text-lg">Elapsed Time: </p>
+                                                    <p className="text-white text-2xl text-center">{formatElapsedTime(elapsedSeconds)}</p>
+                                                    <button onClick={handleCheckOut} className="bg-red-400 text-3xl p-2 cursor-pointer hover:scale-105 transition-all mt-4">
+                                                        Check Out
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                        {hasCheckedIn && hasCheckedOut && (
+                                            <div className="text-white text-center space-y-1">
+                                                <div className="flex gap-8">
+                                                    <div>
+                                                        <p className="font-bold">Checked in: </p>
+                                                        <p>{formatTime(attendance.check_in)}</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-bold">Checked out: </p>
+                                                        <p>{formatTime(attendance.check_out)}</p>
+                                                    </div>
+                                                </div>
+                                                <p className="font-bold">Status:</p>
+                                                <p className="text-left">{attendance.status_hours}</p>
+                                                <p className="text-left">{attendance.status_on_time}</p>
+                                            </div>
+                                        )}
+                                        {actionLoading && <p className="text-white">Processing...</p>}
+                                    </section>
+                                )}
+                                <button onClick={() => setViewRecords(!viewRecords)} className="text-black mt-4 hover:cursor-pointer bg-complementary-colour2 px-4 py-1 rounded-sm hover:scale-105 transition-all">View past attendance records</button>
+                            </section>
+                        )}
+                        {viewRecords && (
+                            <section>
+                                <p onClick={() => setViewRecords(!viewRecords)} className="text-white hover:underline hover:cursor-pointer">back</p>
+                            </section>
+                        )}
+                    </>
+                )}
+                {employee.type === 'HR' && (
+                    <div className="w-full">
+                        {attendanceList.length === 0 ? (
+                            <p className="text-white text-center">No attendance records found.</p>
+                        ) : (
+                            <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4">
+                                {attendanceList.map(att => (
+                                    <div key={att.id} className="bg-complementary-colour2 px-4 py-2">
+                                    {editingId === att.id ? (
+                                        // Edit mode
+                                        <div className="space-y-2">
+                                            <p className="text-center font-bold text-lg">{att.employee?.employee_name || 'Unknown'}</p>
+                                            <p className="text-center font-bold">Date: {formatDate(att.date)}</p>
+                                            
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <div className="flex flex-col">
+                                                    <label className="text-sm font-semibold">Check In</label>
+                                                    <input
+                                                        type="text"
+                                                        name="check_in"
+                                                        value={editFormData.check_in}
+                                                        onChange={handleEditChange}
+                                                        className="bg-white p-1 rounded text-sm"
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <label className="text-sm font-semibold">Check Out</label>
+                                                    <input
+                                                        type="text"
+                                                        name="check_out"
+                                                        value={editFormData.check_out}
+                                                        onChange={handleEditChange}
+                                                        className="bg-white p-1 rounded text-sm"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="flex flex-col">
+                                                <label className="text-sm font-semibold">Work Duration</label>
+                                                <input
+                                                    type="text"
+                                                    name="work_duration"
+                                                    value={editFormData.work_duration}
+                                                    onChange={handleEditChange}
+                                                    className="bg-white p-1 rounded text-sm"
+                                                />
+                                            </div>
+
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <div className="flex flex-col">
+                                                    <label className="text-sm font-semibold">Status Hours</label>
+                                                    <input
+                                                        type="text"
+                                                        name="status_hours"
+                                                        value={editFormData.status_hours}
+                                                        onChange={handleEditChange}
+                                                        className="bg-white p-1 rounded text-sm"
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <label className="text-sm font-semibold">Status On Time</label>
+                                                    <input
+                                                        type="text"
+                                                        name="status_on_time"
+                                                        value={editFormData.status_on_time}
+                                                        onChange={handleEditChange}
+                                                        className="bg-white p-1 rounded text-sm"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="grid grid-cols-2 gap-2 mt-4">
+                                                <button
+                                                    onClick={() => handleUpdate(att.id)}
+                                                    className="w-full bg-green-600 text-white py-1 rounded hover:bg-green-700 hover:cursor-pointer transition-all"
+                                                >
+                                                    Submit
+                                                </button>
+                                                <button
+                                                    onClick={cancelEdit}
+                                                    className="w-full bg-gray-500 text-white py-1 rounded hover:bg-gray-600 hover:cursor-pointer transition-all"
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        // View mode
+                                        <div>
+                                            <p className="text-center font-bold text-lg">{att.employee?.employee_name || 'Unknown'}</p>
+                                            <p className="text-center font-bold">Date: {formatDate(att.date)}</p>
+                                            <div className="grid grid-cols-2">
+                                                <div className="flex flex-col">
+                                                    <p className="text-center">Check In Time:</p>
+                                                    <p className="text-center">{formatTime(att.check_in)}</p>
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <p className="text-center">Check Out Time:</p>
+                                                    <p className="text-center">{formatTime(att.check_out)}</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <p className="text-center">Work duration:</p>
+                                                <p className="text-center">{att.work_duration}</p>
+                                            </div>
+                                            <p>Status Hours: {att.status_hours}</p>
+                                            <p>Status On Time: {att.status_on_time}</p>
+                                            <div className="grid grid-cols-2 mt-4">
+                                                <button
+                                                    onClick={() => startEdit(att)}
+                                                    className="w-full bg-complementary-colour3 py-1 hover:cursor-pointer hover:scale-110 transition-all"
+                                                >
+                                                    UPDATE
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(att.id)}
+                                                    className="w-full bg-red-400 py-1 hover:cursor-pointer hover:scale-110 transition-all"
+                                                >
+                                                    DELETE
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
-                    {!isWeekday && (
-                        <section className="flex flex-col gap-2">
-                            <p className="text-white text-2xl text-center">No attendance for {todayDate}</p>
-                            <img alt="no work image" src="https://media.makeameme.org/created/yay-no-work-cctoqg.jpg"/>
-                        </section>
-                    )}
-                    {isWeekday && (
-                        <section>
-                            <p className="text-white text-2xl text-center">Attendance for {todayDate}</p>
-                            {!hasCheckedIn && !hasCheckedOut && (
-                                <button onClick={handleCheckIn} className="bg-green-400 text-3xl p-2 cursor-pointer hover:scale-105 transition-all">Check In</button>
-                            )}
-                            {hasCheckedIn && !hasCheckedOut && (
-                                <button onClick={handleCheckOut} className="bg-red-400 text-3xl p-2 cursor-pointer hover:scale-105 transition-all">Check Out</button>
-                            )}
-                            {hasCheckedIn && hasCheckedOut && (
-                                <section>
-                                    <p className="text-white text-md">Checked in on: {formatTime(attendance.check_in)}</p>
-                                    <p className="text-white text-md">Checked out on: {formatTime(attendance.check_out)}</p>
-                                    <p className="text-white text-md">Work duration: {attendance.work_duration}</p>
-                                    <p className="text-white text-md">Status: {attendance.status}</p>
-                                </section>
-                            )}
-                            {actionLoading && (
-                                <p className="text-white">Processing...</p>
-                            )}
-                        </section>
-                    )}
-                </section>
+                )}
             </div>
         </div>
-    )
+    );
 }

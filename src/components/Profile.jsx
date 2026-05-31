@@ -3,6 +3,7 @@ import profileImg from '../assets/profile-empty.png'
 import logoImg from '../assets/logo.png'
 import { supabase } from '../utils/supabase/supabase'
 import { useNavigate } from 'react-router-dom'
+import { QRCodeSVG } from 'qrcode.react'
 
 export default function Profile() {
     const navigate = useNavigate();
@@ -22,7 +23,7 @@ export default function Profile() {
             try {
                 const { data, error } = await supabase
                     .from('Employee')
-                    .select('employee_name, employee_email')
+                    .select('employee_name, employee_email, qr_token')
                     .eq('employee_email', user.email)
                     .single();
 
@@ -131,7 +132,21 @@ export default function Profile() {
                                 type={updateName ? 'submit' : 'button'}
                             >{updateName ? "Back" : "Update Name"}</button>
                         </div>
-                        <p className='text-white mt-8 hover:underline hover:cursor-pointer' onClick={() => navigate("/")}>Back to main menu</p>
+                        {employee?.qr_token && (
+                            <div className="text-center flex flex-col items-center gap-4">
+                                <p className="text-white">Your attendance QR code:</p>
+                                <QRCodeSVG className='border-8 border-white' value={employee.qr_token} size={200} />
+                            </div>
+                        )}
+                        <p 
+                            className='hover:scale-110 hover:cursor-pointer transition-all bg-complementary-colour2 px-2 py-1' 
+                                onClick={async () => { 
+                                    if (confirm("Are you sure you want to log out?")) {
+                                        await supabase.auth.signOut(); 
+                                        navigate("/") 
+                                    } else return
+                                }}
+                        >Log out</p>
                     </div>
                 </div>
             </div>
