@@ -107,7 +107,10 @@ export default function Profile() {
             <div className='flex flex-col items-center w-full mt-4'>
                 <div className="container m-auto flex flex-col gap-4 items-center py-8 rounded-xl bg-primary-colour shadow-xl">
                     <div className='flex flex-col items-center gap-4'>
-                        <img className='w-40' src={profileImg}></img>
+                        <div className='flex items-center gap-4'>
+                            <img className='w-40' src={profileImg}></img>
+                            <p className='text-white w-16 hover:cursor-pointer hover:underline'><span><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M440-320v-326L336-542l-56-58 200-200 200 200-56 58-104-104v326h-80ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg></span>upload file</p>
+                        </div>
                         <form onSubmit={handleResetName} className='w-full' id='profile-form'>
                             <p className='text-xl text-white text-left w-full'>Name: {employee.employee_name}</p>
                             {updateName && (
