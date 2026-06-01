@@ -27,8 +27,6 @@ export default function Attendance() {
     const [actionLoading, setActionLoading] = useState(false);
     // const [scanning, setScanning] = useState(false);
     const scannerRef = useRef(null);
-    const [showScanner, setShowScanner] = useState(false);
-    const scannerContainerRef = useRef(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -75,28 +73,6 @@ export default function Attendance() {
             }
         }
     }, [navigate]);
-
-    const stopScan = () => {
-        if (scannerRef.current) {
-            scannerRef.current.clear();
-            scannerRef.current = null;
-        }
-        setShowScanner(false);
-    };
-
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (scannerContainerRef.current && !scannerContainerRef.current.contains(event.target)) {
-                stopScan();
-            }
-        };
-        if (showScanner) {
-            document.addEventListener('mousedown', handleClickOutside);
-        } else {
-            document.removeEventListener('mousedown', handleClickOutside);
-        }
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [showScanner]);
 
     const handleCheckIn = async () => {
         setActionLoading(true);
@@ -164,14 +140,6 @@ export default function Attendance() {
         }
     };
 
-    // QR scan handler
-    const startScan = () => {
-        if (scannerRef.current) {
-            scannerRef.current.clear();
-            scannerRef.current = null;
-        }
-    };
-
     const formatTime = (isoString) => {
         if (!isoString) return '-';
         return new Date(isoString).toLocaleTimeString('en-GB', {
@@ -223,14 +191,11 @@ export default function Attendance() {
                     {isWeekday && (
                         <section className="flex flex-col items-center gap-2">
                             <p className="text-white text-2xl text-center">Attendance for {todayDate}</p>
-                            <div className="relative">
+                            <div>
                                 {!hasCheckedIn && !hasCheckedOut && (
                                     <>
                                         <button onClick={handleCheckIn} className="bg-green-400 text-3xl p-2 cursor-pointer hover:scale-105 transition-all">
                                             Check In
-                                        </button>
-                                        <button onClick={startScan} className="bg-blue-500 text-white text-xl p-2 rounded-lg hover:cursor-pointer hover:scale-110 transition-all">
-                                            Scan QR
                                         </button>
                                     </>
                                 )}
@@ -239,16 +204,7 @@ export default function Attendance() {
                                         <button onClick={handleCheckOut} className="bg-red-400 text-3xl p-2 cursor-pointer hover:scale-105 transition-all">
                                             Check Out
                                         </button>
-                                        <button onClick={startScan} className="bg-blue-500 text-white text-xl p-2 rounded-lg">
-                                            Scan QR
-                                        </button>
                                     </>
-                                )}
-                                {showScanner && (
-                                    <div className="absolute z-50 bg-white p-4 rounded-lg shadow-xl" style={{ top: 'auto', bottom: '100%', left: '50%', transform: 'translateX(-50%)', marginBottom: '10px' }} ref={scannerContainerRef}>
-                                        <div id="qr-reader" style={{ width: '250px' }}></div>
-                                        <button onClick={stopScan} className="mt-2 bg-red-500 text-white px-3 py-1 rounded w-full">Cancel</button>
-                                    </div>
                                 )}
                             </div>
                             {hasCheckedIn && hasCheckedOut && (
