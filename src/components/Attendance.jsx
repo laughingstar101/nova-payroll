@@ -3,7 +3,6 @@ import profileImg from '../assets/profile-empty.png';
 import logoImg from '../assets/logo.png';
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "../utils/supabase/supabase";
-import { Html5QrcodeScanner } from "html5-qrcode";
 
 export default function Attendance() {
     const navigate = useNavigate();
@@ -167,29 +166,10 @@ export default function Attendance() {
 
     // QR scan handler
     const startScan = () => {
-        setShowScanner(true);
-        // Wait for the container to be rendered
-        setTimeout(() => {
-            const scanner = new Html5QrcodeScanner(
-                "qr-reader",
-                { fps: 10, qrbox: { width: 200, height: 200 } },
-                false
-            );
-            scanner.render(
-                (decodedText) => {
-                    if (decodedText === employee.id) {
-                        if (!hasCheckedIn) handleCheckIn();
-                        else if (hasCheckedIn && !hasCheckedOut) handleCheckOut();
-                        else alert("You have already completed attendance for today.");
-                    } else {
-                        alert("Invalid QR code.");
-                    }
-                    stopScan(); // close scanner after scan
-                },
-                (error) => console.warn(error)
-            );
-            scannerRef.current = scanner;
-        }, 100);
+        if (scannerRef.current) {
+            scannerRef.current.clear();
+            scannerRef.current = null;
+        }
     };
 
     const formatTime = (isoString) => {
