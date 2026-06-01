@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import profileImg from '../assets/profile-empty.png';
 import logoImg from '../assets/logo.png';
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../utils/supabase/supabase";
 
 export default function Attendance() {
@@ -25,9 +25,8 @@ export default function Attendance() {
     const [hasCheckedIn, setHasCheckedIn] = useState(false);
     const [hasCheckedOut, setHasCheckedOut] = useState(false);
     const [actionLoading, setActionLoading] = useState(false);
-    // const [scanning, setScanning] = useState(false);
-    const scannerRef = useRef(null);
-
+    const [viewRecords, setViewRecords] = useState(false);
+    
     useEffect(() => {
         const fetchData = async () => {
             const { data: { user } } = await supabase.auth.getUser();
@@ -58,20 +57,13 @@ export default function Attendance() {
                 if (attendanceData?.check_in) setHasCheckedIn(true);
                 if (attendanceData?.check_out) setHasCheckedOut(true);
             } catch (error) {
-                console.error("Error fetching data:", error);
+                console.log("Error fetching data:", error);
                 alert("Error fetching data from database.");
             } finally {
                 setLoading(false);
             }
         };
         fetchData();
-
-        return () => {
-            if (scannerRef.current) {
-                scannerRef.current.clear();
-                scannerRef.current = null;
-            }
-        }
     }, [navigate]);
 
     const handleCheckIn = async () => {
@@ -133,7 +125,7 @@ export default function Attendance() {
             setHasCheckedOut(true);
             alert("Checked out successfully.");
         } catch (error) {
-            console.error(error);
+            console.log(error);
             alert("Failed to check out. Please try again.");
         } finally {
             setActionLoading(false);
@@ -189,7 +181,7 @@ export default function Attendance() {
                         </section>
                     )}
                     {isWeekday && (
-                        <section className="flex flex-col items-center gap-2">
+                        <section className="flex flex-col items-center gap-4">
                             <p className="text-white text-2xl text-center">Attendance for {todayDate}</p>
                             <div>
                                 {!hasCheckedIn && !hasCheckedOut && (
@@ -218,6 +210,7 @@ export default function Attendance() {
                             {actionLoading && <p className="text-white">Processing...</p>}
                         </section>
                     )}
+                    <p onClick={() => setViewRecords(!viewRecords)} className="text-white mt-4 hover:cursor-pointer hover:underline">View past attendance records</p>
                 </section>
             </div>
         </div>
