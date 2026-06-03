@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import profileImg from '../assets/profile-empty.png';
 import logoImg from '../assets/logo.png';
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "../utils/supabase/supabase";
 
 export default function Attendance() {
@@ -28,6 +28,24 @@ export default function Attendance() {
     const [viewRecords, setViewRecords] = useState(false);
     const [attendanceList, setAttendanceList] = useState([]);
     const [companySettings, setCompanySettings] = useState({ work_start_time: '', required_hours: '' });
+    const [elapsedSeconds, setElapsedSeconds] = useState(0);
+    const timerRef = useRef(null);
+
+    const startTimer = (checkInTime) => {
+        if (timerRef.current) clearInterval(timerRef.current);
+        timerRef.current = setInterval(() => {
+            const now = new Date();
+            const diffSeconds = Math.floor((now - new Date(checkInTime)) / 1000)
+            setElapsedSeconds(diffSeconds > 0 ? diffSeconds : 0);
+        }, 1000); // 1s
+    }
+
+    const stopTimer = () => {
+        if (timerRef.current) {
+            clearInterval(timerRef.current);
+            timerRef.current = null;
+        }
+    }
 
     useEffect(() => {
         const fetchData = async () => {
@@ -69,6 +87,10 @@ export default function Attendance() {
                 if (attendanceData?.check_in) setHasCheckedIn(true);
                 if (attendanceData?.check_out) setHasCheckedOut(true);
 
+                if (attendanceData?.check_in && attendanceData?.check_out) {
+                    startTimer(attendanceData.check_in);
+                }
+
             } catch (error) {
                 console.log("Error fetching data:", error);
                 alert("Error fetching data from database.");
@@ -78,6 +100,10 @@ export default function Attendance() {
         };
         fetchData();
     }, [navigate]);
+
+    useEffect(() => {
+        return () => stopTimer();
+    }, [])
 
     useEffect(() => {
         const fetchHrData = async () => {
@@ -114,6 +140,7 @@ export default function Attendance() {
             if (error) throw error;
             setAttendance(data);
             setHasCheckedIn(true);
+            startTimer(data.check_in);
             alert("Checked in successfully.");
         } catch (error) {
             console.log("Full error object:", error);
@@ -164,6 +191,7 @@ export default function Attendance() {
                 status_hours: statusHours,
                 status_on_time: statusOnTime
             }));
+            stopTimer();
             setHasCheckedOut(true);
             alert("Checked out successfully.");
         } catch (error) {
@@ -212,7 +240,6 @@ export default function Attendance() {
             alert("Attendance deleted.")
             setAttendanceList(prevList => prevList.filter(record => record.id !== id));
         }
-
     }
 
     return (
