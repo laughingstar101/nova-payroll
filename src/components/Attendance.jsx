@@ -33,6 +33,9 @@ export default function Attendance() {
 
     const startTimer = (checkInTime) => {
         if (timerRef.current) clearInterval(timerRef.current);
+        const now = new Date();
+        const diffSeconds = Math.floor((now - new Date(checkInTime)) / 1000)
+        setElapsedSeconds(diffSeconds > 0 ? diffSeconds : 0);
         timerRef.current = setInterval(() => {
             const now = new Date();
             const diffSeconds = Math.floor((now - new Date(checkInTime)) / 1000)
@@ -87,7 +90,7 @@ export default function Attendance() {
                 if (attendanceData?.check_in) setHasCheckedIn(true);
                 if (attendanceData?.check_out) setHasCheckedOut(true);
 
-                if (attendanceData?.check_in && attendanceData?.check_out) {
+                if (attendanceData?.check_in && !attendanceData?.check_out) {
                     startTimer(attendanceData.check_in);
                 }
 
