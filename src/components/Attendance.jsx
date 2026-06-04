@@ -238,7 +238,7 @@ export default function Attendance() {
     }
 
     const handleDelete = async (id) => {
-        if (confirm("Are you sure you want to delete this attendance record?")) return; 
+        if (!confirm("Are you sure you want to delete this attendance record?")) return; 
         const { error } = await supabase
             .from("Attendance")
             .delete()
